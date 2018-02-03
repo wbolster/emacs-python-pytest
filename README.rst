@@ -185,7 +185,7 @@ but can also be executed directly (or bound to a key).
 configuration
 =============
 
-tweak the behaviour by customising these variables::
+tweak the behaviour by customising these variables:
 
 - ``python-pytest-confirm``
 
