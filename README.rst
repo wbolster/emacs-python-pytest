@@ -1,0 +1,279 @@
+================
+python-pytest.el
+================
+
+.. image:: https://melpa.org/packages/python-pytest-badge.svg
+   :alt: melpa badge
+
+.. image:: https://stable.melpa.org/packages/python-pytest-badge.svg
+   :alt: melpa stable badge
+
+overview
+========
+
+``python-pytest.el`` is an `emacs`__ package
+to integrate the python `pytest`__ test runner
+into emacs.
+
+__ https://www.gnu.org/software/emacs/
+__ https://pytest.org/
+
+most functionality can be used via
+a dispatcher popup menu built using `magit-popup`__,
+which gives a look and feel
+similar to the fantastic `magit`__ package.
+
+__ https://magit.vc/manual/magit-popup.html
+__ https://magit.vc/
+
+::
+
+  Switches
+  -c color (--color)
+  -d debug on error (--pdb)
+  -f failed first (--failed-first)
+  -l show locals (--showlocals)
+  -q quiet (--quiet)
+  -s do not capture output (--capture=no)
+  -t do not cut tracebacks (--full-trace)
+  -v verbose (--verbose)
+  -x exit (--exitfirst)
+
+  Options
+  =k only names matching expression (-k)
+  =m only marks matching expression (-m)
+  =t traceback style (--tb=)
+  =n exit after N failures or errors (--maxfail=)
+
+  Run tests
+  t Test all            x Test last-failed
+
+  Run tests for current context
+  f Test file           F Test this file      d Test def/class
+
+  Repeat tests
+  r Repeat last test run
+
+
+features
+========
+
+``python-pytest.el`` offers these awesome features:
+
+* various commands with ‘do what i mean’ (dwim) behaviour,
+  using heuristics to automatically detect test files and test
+  functions:
+
+  * run all tests
+
+  * rerun previous failures
+
+  * repeat the last invocation
+
+  * run only tests for the current python module
+
+    this does the right thing both when editing the actual code
+    and the associated test module.
+    for instance, when editing ``foo/bar.py``,
+    this will automatically detect ``tests/test_bar.py``
+    (thanks to the ``projectile`` package),
+    and only run the tests from that test module.
+
+  * run only tests for the current (test) function
+
+    when editing a test module, this runs a single test function
+    by detecting the test function close to the cursor position
+    (‘point’ in emacs terminology).
+
+    when editing the code itself, this function will make a guess.
+    for instance, when editing
+    ``MyABCThingy.__repr__`` inside ``foo/bar.py``,
+    this command will try to run only
+    ``test_my_abc_thingy_repr`` inside ``tests/test_bar.py``.
+
+* easy way to change common switches and options, e.g.s
+  toggling output capture, failing after the first error,
+  and so on.
+
+* edit the automatically generated command line before executing,
+  by invoking commands with a prefix argument (``C-u``).
+
+* basic debugger integration using the pdb tracking support
+  from the built-in `python-mode` package,
+  which will automatically open source files at the right location.
+
+* work simultaneously on multiple python projects.
+  each project will use its own dedicated pytest output buffer.
+
+* various customisation options, e.g. to change whether
+  a generated command line should be shown for editing by default.
+
+* hooks that get run before and after running pytests,
+  which can be used to add custom behaviour.
+
+
+installation
+============
+
+NOTE: THIS PACKAGE IS NOT YET ON MELPA!
+
+``python-pytest.el`` is available from `melpa`__.
+
+__ https://melpa.org/#/python-pytest
+
+with ``use-package``::
+
+.. code-block:: elisp
+
+  (use-package python-pytest)
+
+install manually::
+
+  M-x package-install RET python-pytest RET
+
+note that ``python-pytest.el`` uses `projectile`__
+for some of its features, e.g. finding associated test files.
+this package is intended to work correctly,
+even without any ``projectile`` configuration,
+since it will typically just do the right thing
+if a project has a conventional layout.
+
+__ https://github.com/bbatsov/projectile
+
+
+usage
+=====
+
+the typical usage pattern is to invoke the popup menu,
+named ``python-pytest-popup``.
+it is a good idea to create a dedicated keybinding for this command,
+but it can also be run manually:
+
+::
+
+  M-x python-pytest-popup
+
+this will show a dispatcher menu, making it easy to change
+switches and options, and run one of the actions.
+
+after choosing an action, a dedicated pytest ``comint`` buffer will open,
+showing the output in real time, and allowing interaction with debuggers.
+
+to edit the command line before running it,
+use a prefix argument before calling the action,
+e.g.type ``C-u t`` instead of just ``t`` in the popup menu.
+
+when the popup menu itself is invoked with a prefix argument,
+this will run ``python-pytest-repeat`` to rerun pytest.
+this means a single key binding can be used for both
+an initial run (via the popup), and for repeated calls.
+this is great for quick ‘edit, test, edit, test` cycles.
+
+the available commands are:
+
+- ``python-pytest``
+- ``python-pytest-file``
+- ``python-pytest-file-dwim``
+- ``python-pytest-function-dwim``
+- ``python-pytest-last-failed``
+- ``python-pytest-repeat``
+
+all of these are available via the popup menu,
+but can also be executed directly (or bound to a key).
+
+
+configuration
+=============
+
+tweak the behaviour by customising these variables::
+
+- ``python-pytest-confirm``
+
+  whether to ask for confirmation (allowing editing) by default.
+  this invert the prefix argument (``C-u``) behaviour.
+
+- ``python-pytest-executable``
+
+  the name of the pytest executable (``pytest`` by default)
+
+- ``python-pytest-started-hooks`` and ``python-pytest-finished-hooks``
+
+  hooks run before and after running ``pytest``
+
+- ``python-pytest-buffer-name`` and ``python-pytest-project-name-in-buffer-name``
+
+  ``*pytest*<project-name>`` by default
+
+- ``python-pytest-pdb-track``
+
+  whether to enable the pdb tracking support
+
+to set those permanently, use something like this in ``init.el``:
+
+.. code-block:: elisp
+
+  (use-package python-pytest
+   :custom
+   (python-pytest-confirm t))
+
+alternatively, use the ``customize`` interface::
+
+  M-x customize-group RET python-pytest RET
+
+
+contributing
+============
+
+praise? complaints? bugs? questions? ideas?
+
+please use the github issue tracker.
+
+
+credits
+=======
+
+this emacs package was created by
+`wouter bolsterlee (@wbolster)
+<https://github.com/wbolster>`_.
+
+history
+=======
+
+* 0.1.0 (2018-02)
+
+  * initial release
+
+
+license
+=======
+
+*(this is the osi approved 3-clause "new bsd license".)*
+
+copyright 2018 wouter bolsterlee
+
+all rights reserved.
+
+redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+* redistributions of source code must retain the above copyright notice, this
+  list of conditions and the following disclaimer.
+
+* redistributions in binary form must reproduce the above copyright notice, this
+  list of conditions and the following disclaimer in the documentation and/or
+  other materials provided with the distribution.
+
+* neither the name of the author nor the names of the contributors may be used
+  to endorse or promote products derived from this software without specific
+  prior written permission.
+
+this software is provided by the copyright holders and contributors "as is" and
+any express or implied warranties, including, but not limited to, the implied
+warranties of merchantability and fitness for a particular purpose are
+disclaimed. in no event shall the copyright holder or contributors be liable
+for any direct, indirect, incidental, special, exemplary, or consequential
+damages (including, but not limited to, procurement of substitute goods or
+services; loss of use, data, or profits; or business interruption) however
+caused and on any theory of liability, whether in contract, strict liability,
+or tort (including negligence or otherwise) arising in any way out of the use
+of this software, even if advised of the possibility of such damage.
