@@ -37,13 +37,13 @@ __ https://magit.vc/
   -s do not capture output (--capture=no)
   -t do not cut tracebacks (--full-trace)
   -v verbose (--verbose)
-  -x exit (--exitfirst)
+  -x exit after first failure (--exitfirst)
 
   Options
   =k only names matching expression (-k)
   =m only marks matching expression (-m)
   =t traceback style (--tb=)
-  =n exit after N failures or errors (--maxfail=)
+  =x exit after N failures or errors (--maxfail=)
 
   Run tests
   t Test all            x Test last-failed
