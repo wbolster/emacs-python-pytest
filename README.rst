@@ -185,7 +185,21 @@ but can also be executed directly (or bound to a key).
 configuration
 =============
 
-tweak the behaviour by customising these variables:
+the behaviour of this package can be tweaked
+by customising a few `defcustom` variables.
+use the ``customize`` interface to explore those::
+
+  M-x customize-group RET python-pytest RET
+
+to set those permanently, use something like this in ``init.el``:
+
+.. code-block:: elisp
+
+  (use-package python-pytest
+   :custom
+   (python-pytest-confirm t))
+
+the available variables are:
 
 - ``python-pytest-confirm``
 
@@ -202,23 +216,11 @@ tweak the behaviour by customising these variables:
 
 - ``python-pytest-buffer-name`` and ``python-pytest-project-name-in-buffer-name``
 
-  ``*pytest*<project-name>`` by default
+  the defaults result in ``*pytest*<project-name>``.
 
 - ``python-pytest-pdb-track``
 
   whether to enable the pdb tracking support
-
-to set those permanently, use something like this in ``init.el``:
-
-.. code-block:: elisp
-
-  (use-package python-pytest
-   :custom
-   (python-pytest-confirm t))
-
-alternatively, use the ``customize`` interface::
-
-  M-x customize-group RET python-pytest RET
 
 
 contributing
