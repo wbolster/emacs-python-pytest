@@ -260,9 +260,12 @@ please use the github issue tracker.
 credits
 =======
 
-this emacs package was created by
-`wouter bolsterlee (@wbolster)
-<https://github.com/wbolster>`_.
+this emacs package was created by wouter bolsterlee.
+i am @wbolster on `github`__ and `twitter`__.
+
+__ https://github.com/wbolster
+__ https://twitter.com/wbolster
+
 
 history
 =======
