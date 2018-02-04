@@ -121,7 +121,7 @@ NOTE: THIS PACKAGE IS NOT YET ON MELPA!
 
 __ https://melpa.org/#/python-pytest
 
-with ``use-package``::
+with ``use-package``:
 
 .. code-block:: elisp
 
