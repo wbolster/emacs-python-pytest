@@ -26,10 +26,10 @@
 (require 'projectile)
 (require 's)
 
-(defgroup pytest nil
-  "direnv integration for emacs"
+(defgroup python-pytest nil
+  "pytest integration for emacs"
   :group 'python
-  :prefix "pytest-")
+  :prefix "python-pytest-")
 
 (defcustom python-pytest-confirm nil
   "Whether to edit the command in the minibuffer before execution.
