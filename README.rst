@@ -144,6 +144,9 @@ __ https://github.com/bbatsov/projectile
 usage
 =====
 
+basics
+------
+
 the typical usage pattern is to invoke the popup menu,
 named ``python-pytest-popup``.
 it is a good idea to create a dedicated keybinding for this command,
@@ -153,11 +156,31 @@ but it can also be run manually:
 
   M-x python-pytest-popup
 
-this will show a dispatcher menu, making it easy to change
-switches and options, and run one of the actions.
+this shows a dispatcher menu.
+change some switches and options,
+then run one of the actions.
 
-after choosing an action, a dedicated pytest ``comint`` buffer will open,
-showing the output in real time, and allowing interaction with debuggers.
+a dedicated pytest ``comint`` buffer will open,
+showing the output in real time,
+and allowing interaction with debuggers.
+
+using the correct environment
+-----------------------------
+
+this package ultimately invokes ``pytest``,
+``python-pytest.el`` does *not* guess execution environments,
+so emacs needs to use the right ``exec-path``,
+taking into account python virtual environments, and so on.
+
+to automatically set paths and ‘activate’ a ``virtualenv``,
+use `direnv`__, `emacs-direnv`__, and `exec-path-from-shell`__.
+
+__ https://direnv.net/
+__ https://github.com/wbolster/emacs-direnv
+__ https://github.com/purcell/exec-path-from-shell
+
+editing and repeating
+---------------------
 
 to edit the command line before running it,
 use a prefix argument before calling the action,
@@ -168,6 +191,9 @@ this will run ``python-pytest-repeat`` to rerun pytest.
 this means a single key binding can be used for both
 an initial run (via the popup), and for repeated calls.
 this is great for quick ‘edit, test, edit, test` cycles.
+
+available commands
+------------------
 
 the available commands are:
 
