@@ -91,7 +91,7 @@ features
     this command will try to run only
     ``test_my_abc_thingy_repr`` inside ``tests/test_bar.py``.
 
-* easy way to change common switches and options, e.g.s
+* easy way to change common switches and options, e.g.
   toggling output capture, failing after the first error,
   and so on.
 
@@ -108,7 +108,7 @@ features
 * various customisation options, e.g. to change whether
   a generated command line should be shown for editing by default.
 
-* hooks that get run before and after running pytests,
+* hooks that get run before and after running pytest,
   which can be used to add custom behaviour.
 
 
