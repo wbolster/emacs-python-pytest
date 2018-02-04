@@ -133,9 +133,9 @@ install manually::
 
 note that ``python-pytest.el`` uses `projectile`__
 for some of its features, e.g. finding associated test files.
-this package is intended to work correctly,
+this package is intended to work correctly
 even without any ``projectile`` configuration,
-since it will typically just do the right thing
+since it will likely do the right thing
 if a project has a conventional layout.
 
 __ https://github.com/bbatsov/projectile
