@@ -167,7 +167,7 @@ and allowing interaction with debuggers.
 using the correct environment
 -----------------------------
 
-this package ultimately invokes ``pytest``,
+this package ultimately invokes ``pytest``.
 ``python-pytest.el`` does *not* guess execution environments,
 so emacs needs to use the right ``exec-path``,
 taking into account python virtual environments, and so on.
