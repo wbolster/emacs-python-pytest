@@ -22,9 +22,9 @@
 (require 'python)
 
 (require 'dash)
+(require 'magit-popup)
 (require 'projectile)
 (require 's)
-(require 'magit-popup)
 
 (defgroup pytest nil
   "direnv integration for emacs"
