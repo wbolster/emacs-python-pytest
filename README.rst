@@ -26,6 +26,50 @@ similar to the fantastic `magit`__ package.
 __ https://magit.vc/manual/magit-popup.html
 __ https://magit.vc/
 
+
+features
+========
+
+``python-pytest.el`` offers these awesome features:
+
+* various commands with ‘do what i mean’ (dwim) behaviour,
+  using heuristics to automatically detect test files and test
+  functions:
+
+  * run all tests
+
+  * rerun previous failures
+
+  * repeat the last invocation
+
+  * run only tests for the current python (test) module
+
+  * run only tests for the current (test) function
+
+* easy way to change common switches and options, e.g.
+  toggling output capture, failing after the first error,
+  and so on.
+
+* edit the automatically generated command line before executing,
+  by invoking commands with a prefix argument (``C-u``).
+
+* basic debugger integration using the pdb tracking support
+  from the built-in `python-mode` package,
+  which will automatically open source files at the right location.
+
+* work simultaneously on multiple python projects.
+  each project will use its own dedicated pytest output buffer.
+
+* various customisation options, e.g. to change whether
+  a generated command line should be shown for editing by default.
+
+* hooks that get run before and after running pytest,
+  which can be used to add custom behaviour.
+
+
+screenshot
+==========
+
 ::
 
   Switches
@@ -58,63 +102,6 @@ __ https://magit.vc/
   Common Commands
   C-c C-c Set defaults       C-h i View popup manual    C-t Toggle this section
   C-x C-s Save defaults      ?     Popup help prefix    C-g Abort
-
-
-features
-========
-
-``python-pytest.el`` offers these awesome features:
-
-* various commands with ‘do what i mean’ (dwim) behaviour,
-  using heuristics to automatically detect test files and test
-  functions:
-
-  * run all tests
-
-  * rerun previous failures
-
-  * repeat the last invocation
-
-  * run only tests for the current python module
-
-    this does the right thing both when editing the actual code
-    and the associated test module.
-    for instance, when editing ``foo/bar.py``,
-    this will automatically detect ``tests/test_bar.py``
-    (thanks to the ``projectile`` package),
-    and only run the tests from that test module.
-
-  * run only tests for the current (test) function
-
-    when editing a test module, this runs a single test function
-    by detecting the test function close to the cursor position
-    (‘point’ in emacs terminology).
-
-    when editing the code itself, this function will make a guess.
-    for instance, when editing
-    ``MyABCThingy.__repr__`` inside ``foo/bar.py``,
-    this command will try to run only
-    ``test_my_abc_thingy_repr`` inside ``tests/test_bar.py``.
-
-* easy way to change common switches and options, e.g.
-  toggling output capture, failing after the first error,
-  and so on.
-
-* edit the automatically generated command line before executing,
-  by invoking commands with a prefix argument (``C-u``).
-
-* basic debugger integration using the pdb tracking support
-  from the built-in `python-mode` package,
-  which will automatically open source files at the right location.
-
-* work simultaneously on multiple python projects.
-  each project will use its own dedicated pytest output buffer.
-
-* various customisation options, e.g. to change whether
-  a generated command line should be shown for editing by default.
-
-* hooks that get run before and after running pytest,
-  which can be used to add custom behaviour.
 
 
 installation
@@ -213,6 +200,55 @@ the available commands are:
 all of these are available via the popup menu,
 but can also be executed directly (or bound to a key).
 
+
+heuristics
+==========
+
+this package uses a few heuristics for its
+‘do what i mean’ behaviour.
+
+test file heuristics
+--------------------
+
+the ``python-pytest-file-dwim`` command tries to
+do the right thing both when editing the actual code
+and its associated test module.
+for instance, when editing ``foo/bar.py``,
+this will automatically detect ``tests/test_bar.py``
+(thanks to the ``projectile`` package),
+and only run the tests from that test module.
+
+test function heuristics
+------------------------
+
+the ``python-pytest-function-dwim`` command
+tries to run only tests related to the function
+close to the cursor position
+(‘point’ in emacs terminology).
+
+when editing a test module, this runs
+only a single test function,
+namely the one currently being edited.
+
+when editing the code itself,
+things are more complicated.
+this command will make a guess
+to only run the right test functions.
+the matching behaviour can be tweaked using
+``python-pytest-strict-test-name-matching``
+(see configuration below).
+
+by default, the current function name will be used
+as a pattern to match the corresponding tests.
+for example, when editing ``foo()`` inside ``utils.py``,
+this will match ``test_foo()`` as well as ``test_foo_xyz()``,
+by invoking ``pytest test_utils.py -k test_foo``.
+if a pattern was specified in the popup (the ``-k`` option),
+it will try to make a combined pattern,
+by invoking ``pytest test_utils.py -k 'test_foo and other_filter'``.
+
+when non-nil only ‘test_foo()’ will match, and nothing else,
+by invoking ``pytest test_utils.py::test_foo``.
 
 configuration
 =============
