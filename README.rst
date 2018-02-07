@@ -232,6 +232,10 @@ the available variables are:
   whether to ask for confirmation (allowing editing) by default.
   this invert the prefix argument (``C-u``) behaviour.
 
+- ``python-pytest-strict-test-name-matching``
+
+  Whether to require a strict match for the ‘test this function’ heuristic.
+
 - ``python-pytest-executable``
 
   the name of the pytest executable (``pytest`` by default)

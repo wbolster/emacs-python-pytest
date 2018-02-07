@@ -1,8 +1,8 @@
 ;;; python-pytest.el --- helpers to run pytest -*- lexical-binding: t; -*-
 
 ;; Author: wouter bolsterlee <wouter@bolsterl.ee>
-;; Version: 0.1.0
-;; Package-Requires: ((emacs "24.4") (dash "2.12.0") (magit-popup "2.12.0") (projectile "0.14.0") (s "1.12.0"))
+;; Version: 0.2.0
+;; Package-Requires: ((emacs "24.4") (dash "2.12.0") (dash-functional "2.12.0") (magit-popup "2.12.0") (projectile "0.14.0") (s "1.12.0"))
 ;; Keywords: pytest, test, python, languages, processes, tools
 ;; URL: https://github.com/wbolster/emacs-python-pytest
 ;;
@@ -22,6 +22,7 @@
 (require 'python)
 
 (require 'dash)
+(require 'dash-functional)
 (require 'magit-popup)
 (require 'projectile)
 (require 's)
@@ -76,6 +77,20 @@ This results in automatically opening source files during debugging."
   :group 'pytest
   :type 'boolean)
 
+(defcustom python-pytest-strict-test-name-matching nil
+  "Whether to require a strict match for the ‘test this function’ heuristic.
+
+This influences the ‘test this function’ behaviour when editing a
+non-test function, e.g. ‘foo()’.
+
+When nil (the default), the current function name will be used as
+a pattern to run the corresponding tests, which will match
+‘test_foo()’ as well as ‘test_foo_xyz()’.
+
+When non-nil only ‘test_foo()’ will match, and nothing else."
+  :group 'pytest
+  :type 'boolean)
+
 (defvar python-pytest--history nil
   "History for pytest invocations.")
 
@@ -109,9 +124,10 @@ This results in automatically opening source files during debugging."
     (?f "Test file" python-pytest-file-dwim)
     (?F "Test this file  " python-pytest-file)
     (?d "Test def/class" python-pytest-function-dwim)
+    (?D "This def/class" python-pytest-function)
     "Repeat tests"
     (?r "Repeat last test run" python-pytest-repeat))
-  :max-action-columns 3
+  :max-action-columns 2
   :default-action 'python-pytest-repeat)
 
 ;;;###autoload
@@ -119,7 +135,7 @@ This results in automatically opening source files during debugging."
   "Run pytest with ARGS.
 
 With a prefix argument, allow editing."
-  (interactive (list (python-pytest--arguments)))
+  (interactive (list (python-pytest-arguments)))
   (python-pytest-run
    :args args
    :edit current-prefix-arg))
@@ -133,7 +149,7 @@ With a prefix argument, allow editing."
   (interactive
    (list
     (buffer-file-name)
-    (python-pytest--arguments)))
+    (python-pytest-arguments)))
   (when (file-name-absolute-p file)
     (setq file (file-relative-name file (python-pytest--project-root))))
   (python-pytest-run
@@ -153,8 +169,25 @@ With a prefix argument, allow editing."
   (interactive
    (list
     (buffer-file-name)
-    (python-pytest--arguments)))
+    (python-pytest-arguments)))
   (python-pytest-file (python-pytest--sensible-test-file file) args))
+
+;;;###autoload
+(defun python-pytest-function (file func args)
+  "Run pytest on FILE with FUNC (or class).
+
+Additional ARGS are passed along to pytest.
+With a prefix argument, allow editing."
+  (interactive
+   (list
+    (buffer-file-name)
+    (python-pytest--current-defun)
+    (python-pytest-arguments)))
+  (python-pytest-run
+   :args args
+   :file file
+   :func func
+   :edit current-prefix-arg))
 
 ;;;###autoload
 (defun python-pytest-function-dwim (file func args)
@@ -169,20 +202,34 @@ With a prefix argument, allow editing."
    (list
     (buffer-file-name)
     (python-pytest--current-defun)
-    (python-pytest--arguments)))
-  (unless func
-    (user-error "No class/function found"))
-  (let ((test-file (python-pytest--sensible-test-file file)))
-    (when (file-name-absolute-p test-file)
-      (setq test-file (file-relative-name test-file (python-pytest--project-root))))
-    (unless (python-pytest--test-file-p file)
-      (setq func (python-pytest--make-test-name func)))
-    (setq func (s-replace "." "::" func))
-    (python-pytest-run
-     :args args
-     :file test-file
-     :func func
-     :edit current-prefix-arg)))
+    (python-pytest-arguments)))
+  (unless (python-pytest--test-file-p file)
+    (setq
+     file (python-pytest--sensible-test-file file)
+     func (python-pytest--make-test-name func))
+    (unless python-pytest-strict-test-name-matching
+      (let ((k-option (-first (-partial #'s-prefix-p "-k") args)))
+        (when k-option
+          ;; try to use the existing ‘-k’ option in a sensible way
+          (setq args (-remove-item k-option args)
+                k-option (-as->
+                          k-option s
+                          (s-chop-prefix "-k" s)
+                          (s-trim s)
+                          (if (s-contains-p " " s) (format "(%s)" s) s))))
+        (setq args (-snoc
+                    args
+                    (python-pytest--shell-quote file)
+                    (if k-option
+                        (format "-k %s and %s" func k-option)
+                      (format "-k %s" func)))
+              file nil
+              func nil))))
+  (python-pytest-run
+   :args args
+   :file file
+   :func func
+   :edit current-prefix-arg))
 
 ;;;###autoload
 (defun python-pytest-last-failed (&optional args)
@@ -190,7 +237,7 @@ With a prefix argument, allow editing."
 
 Additional ARGS are passed along to pytest.
 With a prefix argument, allow editing."
-  (interactive (list (python-pytest--arguments)))
+  (interactive (list (python-pytest-arguments)))
   (python-pytest-run
    :args (-snoc args "--last-failed")
    :edit current-prefix-arg))
@@ -217,12 +264,13 @@ With a prefix ARG, allow editing."
 (cl-defun python-pytest-run (&key args file func edit)
   "Run pytest for the given arguments."
   (let ((what))
-    (setq args (cons python-pytest-executable args))
+    (setq args (python-pytest--transform-arguments args))
     (when file
-      (setq what (shell-quote-argument file))
+      (setq what (python-pytest--shell-quote file))
       (when func
-        (setq what (format "%s::%s" what (shell-quote-argument func))))
+        (setq what (format "%s::%s" what (python-pytest--shell-quote func))))
       (setq args (-snoc args what)))
+    (setq args (cons python-pytest-executable args))
     (python-pytest-run-command
      :command (s-join " " args)
      :edit edit)))
@@ -284,12 +332,13 @@ With a prefix ARG, allow editing."
   (with-current-buffer (process-buffer proc)
     (run-hooks 'python-pytest-finished-hooks)))
 
-(defun python-pytest--arguments ()
-  "Return the current arguments in a form understood by pytest."
-  (let ((args (python-pytest-arguments)))
-    (setq args (python-pytest--switch-to-option
-                args "--color" "--color=yes" "--color=no"))
-    args))
+(defun python-pytest--transform-arguments (args)
+  "Transform ARGS so that pytest understands them."
+  (-as->
+   args args
+   (python-pytest--switch-to-option args "--color" "--color=yes" "--color=no")
+   (python-pytest--quote-string-option args "-k")
+   (python-pytest--quote-string-option args "-m")))
 
 (defun python-pytest--switch-to-option (args name on-replacement off-replacement)
   "Look in ARGS for switch NAME and turn it into option with a value.
@@ -298,6 +347,19 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
   (if (-contains-p args name)
       (-replace name on-replacement args)
     (-snoc args off-replacement)))
+
+(defun python-pytest--quote-string-option (args option)
+  "Quote all values in ARGS with the prefix OPTION as shell strings."
+  (--map-when
+   (s-prefix-p option it)
+   (s-concat option
+             " "
+             (-as-> it s
+                    (substring s (length option))
+                    (s-trim s)
+                    (python-pytest--shell-quote s)))
+   args))
+
 
 (defun python-pytest--choose-traceback-style (prompt _value)
   "Helper to choose a pytest traceback style using PROMPT."
@@ -317,6 +379,8 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
         (python-nav-beginning-of-defun)
         (python-nav-forward-statement)
         (setq name (python-info-current-defun)))
+      (unless name
+        (user-error "No class/function found"))
       name)))
 
 (defun python-pytest--make-test-name (func)
