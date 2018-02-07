@@ -49,10 +49,15 @@ __ https://magit.vc/
   t Test all            x Test last-failed
 
   Run tests for current context
-  f Test file           F Test this file      d Test def/class
+  f Test file           F Test this file
+  d Test def/class      D This def/class
 
   Repeat tests
   r Repeat last test run
+
+  Common Commands
+  C-c C-c Set defaults       C-h i View popup manual    C-t Toggle this section
+  C-x C-s Save defaults      ?     Popup help prefix    C-g Abort
 
 
 features
@@ -200,6 +205,7 @@ the available commands are:
 - ``python-pytest``
 - ``python-pytest-file``
 - ``python-pytest-file-dwim``
+- ``python-pytest-function``
 - ``python-pytest-function-dwim``
 - ``python-pytest-last-failed``
 - ``python-pytest-repeat``
