@@ -266,6 +266,12 @@ With a prefix ARG, allow editing."
       (set-process-sentinel process #'python-pytest--process-sentinel)
       (display-buffer buffer))))
 
+(defun python-pytest--shell-quote (s)
+  "Quote S for use in a shell command. Like `shell-quote-argument', but prettier."
+  (if (s-equals-p s (shell-quote-argument s))
+      s
+    (format "'%s'" (s-replace "'" "'\"'\"'" s))))
+
 (defun python-pytest--make-buffer-name ()
   "Make a buffer name for the compilation buffer."
   (let ((name python-pytest-buffer-name))
