@@ -247,7 +247,7 @@ if a pattern was specified in the popup (the ``-k`` option),
 it will try to make a combined pattern,
 by invoking ``pytest test_utils.py -k 'test_foo and other_filter'``.
 
-when non-nil only ‘test_foo()’ will match, and nothing else,
+when non-nil only ``test_foo()`` will match, and nothing else,
 by invoking ``pytest test_utils.py::test_foo``.
 
 configuration
