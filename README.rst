@@ -272,7 +272,7 @@ the available variables are:
 - ``python-pytest-confirm``
 
   whether to ask for confirmation (allowing editing) by default.
-  this invert the prefix argument (``C-u``) behaviour.
+  this inverts the prefix argument (``C-u``) behaviour.
 
 - ``python-pytest-strict-test-name-matching``
 
