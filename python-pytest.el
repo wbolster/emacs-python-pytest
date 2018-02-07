@@ -136,7 +136,7 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
 
 With a prefix argument, allow editing."
   (interactive (list (python-pytest-arguments)))
-  (python-pytest-run
+  (python-pytest--run
    :args args
    :edit current-prefix-arg))
 
@@ -152,7 +152,7 @@ With a prefix argument, allow editing."
     (python-pytest-arguments)))
   (when (file-name-absolute-p file)
     (setq file (file-relative-name file (python-pytest--project-root))))
-  (python-pytest-run
+  (python-pytest--run
    :args args
    :file file
    :edit current-prefix-arg))
@@ -183,7 +183,7 @@ With a prefix argument, allow editing."
     (buffer-file-name)
     (python-pytest--current-defun)
     (python-pytest-arguments)))
-  (python-pytest-run
+  (python-pytest--run
    :args args
    :file file
    :func func
@@ -225,7 +225,7 @@ With a prefix argument, allow editing."
                       (format "-k %s" func)))
               file nil
               func nil))))
-  (python-pytest-run
+  (python-pytest--run
    :args args
    :file file
    :func func
@@ -238,7 +238,7 @@ With a prefix argument, allow editing."
 Additional ARGS are passed along to pytest.
 With a prefix argument, allow editing."
   (interactive (list (python-pytest-arguments)))
-  (python-pytest-run
+  (python-pytest--run
    :args (-snoc args "--last-failed")
    :edit current-prefix-arg))
 
@@ -250,7 +250,7 @@ With a prefix ARG, allow editing."
   (interactive)
   (unless python-pytest--last-command
     (user-error "No previous pytest run"))
-  (python-pytest-run-command
+  (python-pytest--run-command
    :command python-pytest--last-command
    :edit current-prefix-arg))
 
@@ -261,7 +261,7 @@ With a prefix ARG, allow editing."
   comint-mode "pytest"
   "Major mode for pytest sessions (derived from comint-mode).")
 
-(cl-defun python-pytest-run (&key args file func edit)
+(cl-defun python-pytest--run (&key args file func edit)
   "Run pytest for the given arguments."
   (let ((what))
     (setq args (python-pytest--transform-arguments args))
@@ -271,11 +271,11 @@ With a prefix ARG, allow editing."
         (setq what (format "%s::%s" what (python-pytest--shell-quote func))))
       (setq args (-snoc args what)))
     (setq args (cons python-pytest-executable args))
-    (python-pytest-run-command
+    (python-pytest--run-command
      :command (s-join " " args)
      :edit edit)))
 
-(cl-defun python-pytest-run-command (&key command edit)
+(cl-defun python-pytest--run-command (&key command edit)
   "Run a pytest command line."
   (let* ((default-directory (python-pytest--project-root)))
     (when python-pytest-confirm
