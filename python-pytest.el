@@ -314,7 +314,7 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
       name)))
 
 (defun python-pytest--make-test-name (func)
-  "Turn function name FUNC into a corresponding test callable name.
+  "Turn function name FUNC into a name (hopefully) matching its test name.
 
 Example: ‘MyABCThingy.__repr__’ becomes ‘test_my_abc_thingy_repr’."
   (-as->
