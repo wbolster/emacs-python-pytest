@@ -150,8 +150,6 @@ With a prefix argument, allow editing."
    (list
     (buffer-file-name)
     (python-pytest-arguments)))
-  (when (file-name-absolute-p file)
-    (setq file (file-relative-name file (python-pytest--project-root))))
   (python-pytest--run
    :args args
    :file file
@@ -266,6 +264,8 @@ With a prefix ARG, allow editing."
   (let ((what))
     (setq args (python-pytest--transform-arguments args))
     (when file
+      (when (file-name-absolute-p file)
+        (setq file (python-pytest--relative-file-name file)))
       (setq what (python-pytest--shell-quote file))
       (when func
         (setq what (format "%s::%s" what (python-pytest--shell-quote func))))
@@ -410,6 +410,13 @@ Example: ‘MyABCThingy.__repr__’ becomes ‘test_my_abc_thingy_repr’."
   "Find the project root directory."
   (projectile-project-root))
 
+(defun python-pytest--relative-file-name (file)
+  "Make FILE relative to the project root."
+  ;; Note: setting default-directory gives different results
+  ;; than providing a second argument to file-relative-name.
+  (let ((default-directory (python-pytest--project-root)))
+    (file-relative-name file)))
+
 (defun python-pytest--test-file-p (file)
   "Tell whether FILE is a test file."
   (projectile-test-file-p file))
@@ -424,7 +431,7 @@ Example: ‘MyABCThingy.__repr__’ becomes ‘test_my_abc_thingy_repr’."
 (defun python-pytest--sensible-test-file (file)
   "Return a sensible test file name for FILE."
   (if (python-pytest--test-file-p file)
-      (file-relative-name file (python-pytest--project-root))
+      (python-pytest--relative-file-name file)
     (python-pytest--find-test-file file)))
 
 (provide 'python-pytest)
