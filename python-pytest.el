@@ -285,7 +285,10 @@ With a prefix ARG, allow editing."
             (read-from-minibuffer
              "Command: "
              command nil nil 'python-pytest--history)))
-    (setq python-pytest--last-command command)
+    (add-to-history 'python-pytest--history command)
+    (setq
+     python-pytest--history (-uniq python-pytest--history)
+     python-pytest--last-command command)
     (python-pytest-run-as-comint command)))
 
 (defun python-pytest-run-as-comint (command)
