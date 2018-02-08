@@ -253,6 +253,9 @@ by invoking ``pytest test_utils.py::test_foo``.
 configuration
 =============
 
+settings
+--------
+
 the behaviour of this package can be tweaked
 by customising a few `defcustom` variables.
 use the ``customize`` interface to explore those::
@@ -293,6 +296,26 @@ the available variables are:
 - ``python-pytest-pdb-track``
 
   whether to enable the pdb tracking support
+
+
+extending the popup
+-------------------
+
+when using pytest plugins that provide extra switches,
+it may be useful to integrate those into the popup.
+see the `magit-popup`__ manual for more information.
+
+__ https://magit.vc/manual/magit-popup.html
+
+as an example, this will add a ``-z`` switch that,
+when enabled, will invoke ``pytest ---zzz``:
+
+.. code-block:: elisp
+
+  (use-package python-pytest
+   :config
+   (magit-define-popup-switch 'python-pytest-popup
+    ?z "Custom flag" "--zzz"))
 
 
 contributing
