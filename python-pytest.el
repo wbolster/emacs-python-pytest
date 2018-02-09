@@ -103,9 +103,10 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
   'python-pytest
   :switches
   '((?c "color" "--color" t)
-    (?d "debug on error" "--pdb")
+    (?d "run doctests" "--doctest-modules")
     (?f "failed first" "--failed-first")
     (?l "show locals" "--showlocals")
+    (?p "debug on error" "--pdb")
     (?q "quiet" "--quiet")
     (?s "do not capture output" "--capture=no")
     (?t "do not cut tracebacks" "--full-trace")
