@@ -48,17 +48,17 @@ When t, this toggles the behaviour of the prefix argument."
   :group 'pytest
   :type 'string)
 
-(defcustom python-pytest-setup-hooks nil
+(defcustom python-pytest-setup-hook nil
   "Hooks to run before a pytest process starts."
   :group 'pytest
   :type 'hook)
 
-(defcustom python-pytest-started-hooks nil
+(defcustom python-pytest-started-hook nil
   "Hooks to run after a pytest process starts."
   :group 'pytest
   :type 'hook)
 
-(defcustom python-pytest-finished-hooks nil
+(defcustom python-pytest-finished-hook nil
   "Hooks to run after a pytest process finishes."
   :group 'pytest
   :type 'hook)
@@ -320,9 +320,9 @@ With a prefix ARG, allow editing."
          'comint-output-filter-functions
          'python-pdbtrack-comint-output-filter-function
          nil t))
-      (run-hooks 'python-pytest-setup-hooks)
+      (run-hooks 'python-pytest-setup-hook)
       (make-comint-in-buffer "pytest" buffer "sh" nil "-c" command)
-      (run-hooks 'python-pytest-started-hooks)
+      (run-hooks 'python-pytest-started-hook)
       (setq process (get-buffer-process buffer))
       (set-process-sentinel process #'python-pytest--process-sentinel)
       (display-buffer buffer))))
@@ -343,7 +343,7 @@ With a prefix ARG, allow editing."
 (defun python-pytest--process-sentinel (proc _state)
   "Process sentinel helper to run hooks after PROC finishes."
   (with-current-buffer (process-buffer proc)
-    (run-hooks 'python-pytest-finished-hooks)))
+    (run-hooks 'python-pytest-finished-hook)))
 
 (defun python-pytest--transform-arguments (args)
   "Transform ARGS so that pytest understands them."
