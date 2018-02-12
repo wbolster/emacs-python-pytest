@@ -102,6 +102,9 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
 (defvar python-pytest--project-last-command (make-hash-table :test 'equal)
   "Last executed command lines, per project.")
 
+(defvar-local python-pytest--current-command nil
+  "Current command; used in python-pytest-mode buffers.")
+
 ;;;###autoload (autoload 'python-pytest-popup "pytest" nil t)
 (magit-define-popup python-pytest-popup
   "Show popup for running pytest."
@@ -255,6 +258,9 @@ With a prefix ARG, allow editing."
   (let ((command (gethash
                   (python-pytest--project-root)
                   python-pytest--project-last-command)))
+    (when python-pytest--current-command
+      ;; existing python-pytest-mode buffer; reuse command
+      (setq command python-pytest--current-command))
     (unless command
       (user-error "No previous pytest run for this project"))
     (python-pytest--run-command
@@ -302,7 +308,7 @@ With a prefix ARG, allow editing."
 
 (defun python-pytest-run-as-comint (command)
   "Run a pytest comint session for COMMAND."
-  (let* ((buffer (get-buffer-create (python-pytest--make-buffer-name)))
+  (let* ((buffer (python-pytest--get-buffer))
          (process (get-buffer-process buffer)))
     (with-current-buffer buffer
       (when (comint-check-proc buffer)
@@ -313,8 +319,9 @@ With a prefix ARG, allow editing."
         (delete-process process))
       (erase-buffer)
       (kill-all-local-variables)
-      (insert (format "cwd: %s\ncmd: %s\n\n" default-directory command))
       (python-pytest-mode)
+      (insert (format "cwd: %s\ncmd: %s\n\n" default-directory command))
+      (setq python-pytest--current-command command)
       (when python-pytest-pdb-track
         (add-hook
          'comint-output-filter-functions
@@ -333,12 +340,15 @@ With a prefix ARG, allow editing."
       s
     (format "'%s'" (s-replace "'" "'\"'\"'" s))))
 
-(defun python-pytest--make-buffer-name ()
-  "Make a buffer name for the compilation buffer."
-  (let ((name python-pytest-buffer-name))
-    (when python-pytest-project-name-in-buffer-name
-      (setq name (format "%s<%s>" name (python-pytest--project-name))))
-    name))
+(defun python-pytest--get-buffer ()
+  "Get a create a suitable compilation buffer."
+  (magit-with-pre-popup-buffer
+    (if (eq major-mode 'python-pytest-mode)
+        (current-buffer)  ;; re-use buffer
+      (let ((name python-pytest-buffer-name))
+        (when python-pytest-project-name-in-buffer-name
+          (setq name (format "%s<%s>" name (python-pytest--project-name))))
+        (get-buffer-create name)))))
 
 (defun python-pytest--process-sentinel (proc _state)
   "Process sentinel helper to run hooks after PROC finishes."
