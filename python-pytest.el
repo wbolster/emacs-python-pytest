@@ -48,8 +48,13 @@ When t, this toggles the behaviour of the prefix argument."
   :group 'pytest
   :type 'string)
 
-(defcustom python-pytest-started-hooks nil
+(defcustom python-pytest-setup-hooks nil
   "Hooks to run before a pytest process starts."
+  :group 'pytest
+  :type 'hook)
+
+(defcustom python-pytest-started-hooks nil
+  "Hooks to run after a pytest process starts."
   :group 'pytest
   :type 'hook)
 
@@ -315,6 +320,7 @@ With a prefix ARG, allow editing."
          'comint-output-filter-functions
          'python-pdbtrack-comint-output-filter-function
          nil t))
+      (run-hooks 'python-pytest-setup-hooks)
       (make-comint-in-buffer "pytest" buffer "sh" nil "-c" command)
       (run-hooks 'python-pytest-started-hooks)
       (setq process (get-buffer-process buffer))
