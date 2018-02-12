@@ -166,6 +166,16 @@ taking into account python virtual environments, and so on.
 
 to automatically set paths and ‘activate’ a ``virtualenv``,
 use `direnv`__, `emacs-direnv`__, and `exec-path-from-shell`__.
+to make rerunning tests work correctly,
+even after editing files from other projects in the mean time,
+make the output buffers ``direnv`` aware::
+
+.. code-block:: elisp
+
+  (use-package python-pytest
+    :config
+    (add-to-list 'direnv-non-file-modes 'python-pytest-mode))
+
 
 __ https://direnv.net/
 __ https://github.com/wbolster/emacs-direnv
@@ -291,18 +301,6 @@ the available variables are:
 
   hooks run before starting ``pytest``, after starting ``pytest``,
   and after ``pytest`` finished.
-
-  for instance, ``direnv`` users may want to make
-  make all output buffers ``direnv`` aware,
-  so that ``python-pytest-repeat`` works on those
-  even after switching to files inside another project.
-  to accomplish that, use something like this:
-
-  .. code-block:: elisp
-
-    (use-package python-pytest
-     :config
-     (add-hook 'python-pytest-setup-hooks #'direnv-update-directory-environment))
 
 - ``python-pytest-buffer-name`` and ``python-pytest-project-name-in-buffer-name``
 
