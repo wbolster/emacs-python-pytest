@@ -285,9 +285,24 @@ the available variables are:
 
   the name of the pytest executable (``pytest`` by default)
 
-- ``python-pytest-started-hooks`` and ``python-pytest-finished-hooks``
+- ``python-pytest-setup-hook``,
+  ``python-pytest-started-hook``, and
+  ``python-pytest-finished-hook``
 
-  hooks run before and after running ``pytest``
+  hooks run before starting ``pytest``, after starting ``pytest``,
+  and after ``pytest`` finished.
+
+  for instance, ``direnv`` users may want to make
+  make all output buffers ``direnv`` aware,
+  so that ``python-pytest-repeat`` works on those
+  even after switching to files inside another project.
+  to accomplish that, use something like this:
+
+  .. code-block:: elisp
+
+    (use-package python-pytest
+     :config
+     (add-hook 'python-pytest-setup-hooks #'direnv-update-directory-environment))
 
 - ``python-pytest-buffer-name`` and ``python-pytest-project-name-in-buffer-name``
 
