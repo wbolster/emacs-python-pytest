@@ -94,8 +94,8 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
 (defvar python-pytest--history nil
   "History for pytest invocations.")
 
-(defvar python-pytest--last-command nil
-  "Command line used for the last run.")
+(defvar python-pytest--project-last-command (make-hash-table :test 'equal)
+  "Last executed command lines, per project.")
 
 ;;;###autoload (autoload 'python-pytest-popup "pytest" nil t)
 (magit-define-popup python-pytest-popup
@@ -247,11 +247,14 @@ With a prefix argument, allow editing."
 
 With a prefix ARG, allow editing."
   (interactive)
-  (unless python-pytest--last-command
-    (user-error "No previous pytest run"))
-  (python-pytest--run-command
-   :command python-pytest--last-command
-   :edit current-prefix-arg))
+  (let ((command (gethash
+                  (python-pytest--project-root)
+                  python-pytest--project-last-command)))
+    (unless command
+      (user-error "No previous pytest run for this project"))
+    (python-pytest--run-command
+     :command command
+     :edit current-prefix-arg)))
 
 
 ;; internal helpers
@@ -287,9 +290,9 @@ With a prefix ARG, allow editing."
              "Command: "
              command nil nil 'python-pytest--history)))
     (add-to-history 'python-pytest--history command)
-    (setq
-     python-pytest--history (-uniq python-pytest--history)
-     python-pytest--last-command command)
+    (setq python-pytest--history (-uniq python-pytest--history))
+    (puthash (python-pytest--project-root) command
+             python-pytest--project-last-command)
     (python-pytest-run-as-comint command)))
 
 (defun python-pytest-run-as-comint (command)
