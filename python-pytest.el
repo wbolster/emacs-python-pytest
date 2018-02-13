@@ -276,18 +276,21 @@ With a prefix ARG, allow editing."
 
 (cl-defun python-pytest--run (&key args file func edit)
   "Run pytest for the given arguments."
-  (let ((what))
-    (setq args (python-pytest--transform-arguments args))
-    (when file
-      (when (file-name-absolute-p file)
-        (setq file (python-pytest--relative-file-name file)))
-      (setq what (python-pytest--shell-quote file))
-      (when func
-        (setq what (format "%s::%s" what (python-pytest--shell-quote func))))
-      (setq args (-snoc args what)))
-    (setq args (cons python-pytest-executable args))
+  (setq args (python-pytest--transform-arguments args))
+  (when (and file (file-name-absolute-p file))
+    (setq file (python-pytest--relative-file-name file)))
+  (when func
+    (setq func (s-replace "." "::" func)))
+  (let ((command)
+        (thing (cond
+                ((and file func) (format "%s::%s" file func))
+                (file file))))
+    (when thing
+      (setq args (-snoc args (python-pytest--shell-quote thing))))
+    (setq args (cons python-pytest-executable args)
+          command (s-join " " args))
     (python-pytest--run-command
-     :command (s-join " " args)
+     :command command
      :edit edit)))
 
 (cl-defun python-pytest--run-command (&key command edit)
