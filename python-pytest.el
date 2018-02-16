@@ -14,7 +14,7 @@
 
 ;;; Commentary:
 
-;;; This package provides helpers to run pytest inside Emacs.
+;;; This package provides helpers to run pytest.
 
 ;;; Code:
 
@@ -28,7 +28,7 @@
 (require 's)
 
 (defgroup python-pytest nil
-  "pytest integration for emacs"
+  "pytest integration"
   :group 'python
   :prefix "python-pytest-")
 

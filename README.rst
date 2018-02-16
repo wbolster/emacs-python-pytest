@@ -12,8 +12,7 @@ overview
 ========
 
 ``python-pytest.el`` is an `emacs`__ package
-to integrate the python `pytest`__ test runner
-into emacs.
+to integrate the python `pytest`__ test runner.
 
 __ https://www.gnu.org/software/emacs/
 __ https://pytest.org/
@@ -342,7 +341,7 @@ please use the github issue tracker.
 credits
 =======
 
-this emacs package was created by wouter bolsterlee.
+this package was created by wouter bolsterlee.
 i am @wbolster on `github`__ and `twitter`__.
 
 __ https://github.com/wbolster
