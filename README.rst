@@ -106,8 +106,6 @@ screenshot
 installation
 ============
 
-NOTE: THIS PACKAGE IS NOT YET ON MELPA!
-
 ``python-pytest.el`` is available from `melpa`__.
 
 __ https://melpa.org/#/python-pytest
