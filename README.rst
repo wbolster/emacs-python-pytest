@@ -349,7 +349,20 @@ __ https://twitter.com/wbolster
 history
 =======
 
-* 0.1.0 (2018-02)
+* 0.2.0 (2018-02-19)
+
+  * now available from melpa
+  * more docs
+  * various ‘dwim’ improvements
+  * renamed and added a few popup flags
+  * improved relative path handling
+  * improved hooks
+  * improved history
+  * better shell escaping
+  * remember current command in output buffer to make repeating work
+  * misc other tweaks and fixes
+
+* 0.1.0 (2018-02-03)
 
   * initial release
 
