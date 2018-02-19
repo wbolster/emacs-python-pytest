@@ -165,7 +165,7 @@ to automatically set paths and ‘activate’ a ``virtualenv``,
 use `direnv`__, `emacs-direnv`__, and `exec-path-from-shell`__.
 to make rerunning tests work correctly,
 even after editing files from other projects in the mean time,
-make the output buffers ``direnv`` aware::
+make the output buffers ``direnv`` aware:
 
 .. code-block:: elisp
 
