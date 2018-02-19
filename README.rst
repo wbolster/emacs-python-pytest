@@ -318,7 +318,7 @@ see the `magit-popup`__ manual for more information.
 __ https://magit.vc/manual/magit-popup.html
 
 as an example, this will add a ``-z`` switch that,
-when enabled, will invoke ``pytest ---zzz``:
+when enabled, will invoke ``pytest --zzz``:
 
 .. code-block:: elisp
 
