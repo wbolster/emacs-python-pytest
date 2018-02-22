@@ -339,6 +339,10 @@ __ https://twitter.com/wbolster
 history
 =======
 
+* 0.2.1 (2018-02-22)
+
+  * fix autoloading for ``python-pytest-popup`` command
+
 * 0.2.0 (2018-02-19)
 
   * now available from melpa
