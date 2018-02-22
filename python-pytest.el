@@ -122,7 +122,7 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
 (defvar-local python-pytest--current-command nil
   "Current command; used in python-pytest-mode buffers.")
 
-;;;###autoload (autoload 'python-pytest-popup "pytest" nil t)
+;;;###autoload (autoload 'python-pytest-popup "python-pytest" nil t)
 (magit-define-popup python-pytest-popup
   "Show popup for running pytest."
   'python-pytest
