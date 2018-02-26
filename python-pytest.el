@@ -236,11 +236,11 @@ With a prefix argument, allow editing."
         (when k-option
           ;; try to use the existing ‘-k’ option in a sensible way
           (setq args (-remove-item k-option args)
-                k-option (-as->
-                          k-option s
-                          (s-chop-prefix "-k" s)
-                          (s-trim s)
-                          (if (s-contains-p " " s) (format "(%s)" s) s))))
+                k-option (-->
+                          k-option
+                          (s-chop-prefix "-k" it)
+                          (s-trim it)
+                          (if (s-contains-p " " it) (format "(%s)" it) it))))
         (setq args (-snoc
                     args
                     (python-pytest--shell-quote file)
@@ -376,11 +376,11 @@ With a prefix ARG, allow editing."
 
 (defun python-pytest--transform-arguments (args)
   "Transform ARGS so that pytest understands them."
-  (-as->
-   args args
-   (python-pytest--switch-to-option args "--color" "--color=yes" "--color=no")
-   (python-pytest--quote-string-option args "-k")
-   (python-pytest--quote-string-option args "-m")))
+  (-->
+   args
+   (python-pytest--switch-to-option it "--color" "--color=yes" "--color=no")
+   (python-pytest--quote-string-option it "-k")
+   (python-pytest--quote-string-option it "-m")))
 
 (defun python-pytest--switch-to-option (args name on-replacement off-replacement)
   "Look in ARGS for switch NAME and turn it into option with a value.
@@ -394,12 +394,12 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
   "Quote all values in ARGS with the prefix OPTION as shell strings."
   (--map-when
    (s-prefix-p option it)
-   (s-concat option
-             " "
-             (-as-> it s
-                    (substring s (length option))
-                    (s-trim s)
-                    (python-pytest--shell-quote s)))
+   (let ((s it))
+     (--> s
+          (substring it (length option))
+          (s-trim it)
+          (python-pytest--shell-quote it)
+          (format "%s %s" option it)))
    args))
 
 
@@ -429,14 +429,14 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
   "Turn function name FUNC into a name (hopefully) matching its test name.
 
 Example: ‘MyABCThingy.__repr__’ becomes ‘test_my_abc_thingy_repr’."
-  (-as->
-   func s
-   (s-replace "." "_" s)
-   (s-snake-case s)
-   (s-replace-regexp "_\+" "_" s)
-   (s-chop-suffix "_" s)
-   (s-chop-prefix "_" s)
-   (format "test_%s" s)))
+  (-->
+   func
+   (s-replace "." "_" it)
+   (s-snake-case it)
+   (s-replace-regexp "_\+" "_" it)
+   (s-chop-suffix "_" it)
+   (s-chop-prefix "_" it)
+   (format "test_%s" it)))
 
 
 ;; file/directory helpers
