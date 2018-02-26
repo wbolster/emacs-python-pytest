@@ -343,6 +343,11 @@ __ https://twitter.com/wbolster
 history
 =======
 
+* 0.2.2 (2018-02-26)
+
+  * avoid ``-as->`` macro since the ``dash.el`` version
+    currently on melpa stable does not have it.
+
 * 0.2.1 (2018-02-22)
 
   * fix autoloading for ``python-pytest-popup`` command
