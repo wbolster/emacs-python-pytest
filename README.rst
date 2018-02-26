@@ -161,8 +161,12 @@ this package ultimately invokes ``pytest``.
 so emacs needs to use the right ``exec-path``,
 taking into account python virtual environments, and so on.
 
-to automatically set paths and ‘activate’ a ``virtualenv``,
-use `direnv`__, `emacs-direnv`__, and `exec-path-from-shell`__.
+to manage the execution environment, consider using `direnv`__:
+it can change (and revert) paths and environment variables,
+simply by switching to a project directory,
+making it perfect for automatically ‘activating’ a ``virtualenv``.
+use `emacs-direnv`__ and possibly `exec-path-from-shell`__
+to achieve the same inside emacs.
 
 __ https://direnv.net/
 __ https://github.com/wbolster/emacs-direnv
