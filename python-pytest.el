@@ -327,11 +327,11 @@ With a prefix ARG, allow editing."
     (setq python-pytest--history (-uniq python-pytest--history))
     (puthash (python-pytest--project-root) command
              python-pytest--project-last-command)
-    (python-pytest-run-as-comint
+    (python-pytest--run-as-comint
      :command command
      :popup-arguments popup-arguments)))
 
-(cl-defun python-pytest-run-as-comint (&key command popup-arguments)
+(cl-defun python-pytest--run-as-comint (&key command popup-arguments)
   "Run a pytest comint session for COMMAND."
   (let* ((buffer (python-pytest--get-buffer))
          (process (get-buffer-process buffer)))
