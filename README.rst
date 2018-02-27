@@ -350,36 +350,41 @@ while `melpa stable`__ only contains tagged (released) versions.
 __ https://melpa.org/
 __ https://stable.melpa.org/
 
-* 0.3.0 (no tagged release yet)
+0.3.0 (no tagged release yet)
+-----------------------------
 
-  * repopulate the popup with the previously used values
-    when running ``python-pytest-popup`` from an output buffer.
+* repopulate the popup with the previously used values
+  when running ``python-pytest-popup`` from an output buffer.
 
-* 0.2.2 (2018-02-26)
+0.2.2 (2018-02-26)
+------------------
 
-  * avoid ``-as->`` macro since the ``dash.el`` version
-    currently on melpa stable does not have it.
+* avoid ``-as->`` macro since the ``dash.el`` version
+  currently on melpa stable does not have it.
 
-* 0.2.1 (2018-02-22)
+0.2.1 (2018-02-22)
+------------------
 
-  * fix autoloading for ``python-pytest-popup`` command
+* fix autoloading for ``python-pytest-popup`` command
 
-* 0.2.0 (2018-02-19)
+0.2.0 (2018-02-19)
+------------------
 
-  * now available from melpa
-  * more docs
-  * various ‘dwim’ improvements
-  * renamed and added a few popup flags
-  * improved relative path handling
-  * improved hooks
-  * improved history
-  * better shell escaping
-  * remember current command in output buffer to make repeating work
-  * misc other tweaks and fixes
+* now available from melpa
+* more docs
+* various ‘dwim’ improvements
+* renamed and added a few popup flags
+* improved relative path handling
+* improved hooks
+* improved history
+* better shell escaping
+* remember current command in output buffer to make repeating work
+* misc other tweaks and fixes
 
-* 0.1.0 (2018-02-03)
+0.1.0 (2018-02-03)
+------------------
 
-  * initial release
+* initial release
 
 
 license
