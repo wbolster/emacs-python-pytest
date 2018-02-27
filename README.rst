@@ -350,6 +350,11 @@ while `melpa stable`__ only contains tagged (released) versions.
 __ https://melpa.org/
 __ https://stable.melpa.org/
 
+* 0.3.0 (no tagged release yet)
+
+  * repopulate the popup with the previously used values
+    when running ``python-pytest-popup`` from an output buffer.
+
 * 0.2.2 (2018-02-26)
 
   * avoid ``-as->`` macro since the ``dash.el`` version
