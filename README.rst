@@ -355,12 +355,14 @@ __ https://stable.melpa.org/
 
 * repopulate the popup with the previously used values
   when running ``python-pytest-popup`` from an output buffer.
+  (`#3 <https://github.com/wbolster/emacs-python-pytest/issues/3>`_)
 
 0.2.2 (2018-02-26)
 ------------------
 
 * avoid ``-as->`` macro since the ``dash.el`` version
   currently on melpa stable does not have it.
+  (`#2 <https://github.com/wbolster/emacs-python-pytest/issues/2>`_)
 
 0.2.1 (2018-02-22)
 ------------------
@@ -371,6 +373,7 @@ __ https://stable.melpa.org/
 ------------------
 
 * now available from melpa
+  (`#1 <https://github.com/wbolster/emacs-python-pytest/issues/1>`_)
 * more docs
 * various ‘dwim’ improvements
 * renamed and added a few popup flags
