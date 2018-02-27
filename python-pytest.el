@@ -409,7 +409,6 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
           (format "%s %s" option it)))
    args))
 
-
 (defun python-pytest--choose-traceback-style (prompt _value)
   "Helper to choose a pytest traceback style using PROMPT."
   (completing-read
