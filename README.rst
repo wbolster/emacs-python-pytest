@@ -343,6 +343,13 @@ __ https://twitter.com/wbolster
 history
 =======
 
+note:
+`melpa`__ automatically ships the latest code from ``git master``,
+while `melpa stable`__ only contains tagged (released) versions.
+
+__ https://melpa.org/
+__ https://stable.melpa.org/
+
 * 0.2.2 (2018-02-26)
 
   * avoid ``-as->`` macro since the ``dash.el`` version
