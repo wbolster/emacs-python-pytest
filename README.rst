@@ -350,6 +350,11 @@ while `melpa stable`__ only contains tagged (released) versions.
 __ https://melpa.org/
 __ https://stable.melpa.org/
 
+0.3.1 (2018–03-07)
+------------------
+
+* fix package version number for melpa stable
+
 0.3.0 (2018–03-07)
 ------------------
 
