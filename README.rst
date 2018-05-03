@@ -259,11 +259,13 @@ settings
 
 the behaviour of this package can be tweaked
 by customising a few `defcustom` variables.
-use the ``customize`` interface to explore those::
+use the ``customize`` interface to explore those
+(each will show a description and possible values)::
 
   M-x customize-group RET python-pytest RET
 
-to set those permanently, use something like this in ``init.el``:
+to set those permanently without using the customize interface,
+use something like this in ``init.el``:
 
 .. code-block:: elisp
 
@@ -285,6 +287,14 @@ the available variables are:
 - ``python-pytest-executable``
 
   the name of the pytest executable (``pytest`` by default)
+
+– ``python-pytest-unsaved-buffers-behavior``
+
+  whether to ask whether unsaved buffers should be saved before
+  running pytest. the check for unsaved buffers can be for only the
+  current buffer, or for all project buffers, and those can be saved
+  directly, or after confirmation. valid values: ``ask-all``,
+  ``ask-current``, ``save-all``, ``save-current``, or ``nil``.
 
 - ``python-pytest-setup-hook``,
   ``python-pytest-started-hook``, and
@@ -352,6 +362,9 @@ __ https://stable.melpa.org/
 
 0.4.0 (…)
 ---------
+
+* save (or ask to save) modified buffers before running pytest
+  (`#4 <https://github.com/wbolster/emacs-python-pytest/issues/4>`_)
 
 * put customizable variables in the right group
 
