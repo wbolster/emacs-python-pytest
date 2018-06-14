@@ -360,8 +360,17 @@ while `melpa stable`__ only contains tagged (released) versions.
 __ https://melpa.org/
 __ https://stable.melpa.org/
 
-0.4.0 (…)
----------
+
+1.x (…)
+-------
+
+* …
+
+1.0.0 (2018-06-14)
+------------------
+
+* this package is useful for quite a few people.
+  time to celebrate with a 1.x release!
 
 * save (or ask to save) modified buffers before running pytest
   (`#4 <https://github.com/wbolster/emacs-python-pytest/issues/4>`_)
