@@ -356,7 +356,8 @@ With a prefix ARG, allow editing."
       (when process
         (delete-process process))
       (erase-buffer)
-      (python-pytest-mode)
+      (unless (eq major-mode 'python-pytest-mode)
+        (python-pytest-mode))
       (insert (format "cwd: %s\ncmd: %s\n\n" default-directory command))
       (make-local-variable 'python-pytest-arguments)
       (setq python-pytest--current-command command
