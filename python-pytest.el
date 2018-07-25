@@ -36,6 +36,7 @@
 ;;; Code:
 
 (require 'comint)
+(require 'compile)
 (require 'python)
 
 (require 'dash)
@@ -302,7 +303,8 @@ With a prefix ARG, allow editing."
 
 (define-derived-mode python-pytest-mode
   comint-mode "pytest"
-  "Major mode for pytest sessions (derived from comint-mode).")
+  "Major mode for pytest sessions (derived from comint-mode)."
+  (compilation-setup))
 
 (cl-defun python-pytest--run (&key args file func edit)
   "Run pytest for the given arguments."
@@ -358,6 +360,7 @@ With a prefix ARG, allow editing."
       (erase-buffer)
       (unless (eq major-mode 'python-pytest-mode)
         (python-pytest-mode))
+      (compilation-forget-errors)
       (insert (format "cwd: %s\ncmd: %s\n\n" default-directory command))
       (make-local-variable 'python-pytest-arguments)
       (setq python-pytest--current-command command
