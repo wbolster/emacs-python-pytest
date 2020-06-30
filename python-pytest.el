@@ -436,13 +436,25 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
 
 (defun python-pytest--current-defun ()
   "Detect the current function/class (if any)."
-  (or (python-info-current-defun)
-      (save-excursion
-        ;; As a fallback, jumping seems to make it work on empty lines.
-        (python-nav-beginning-of-defun)
-        (python-nav-forward-statement)
-        (python-info-current-defun))
-      (user-error "No class/function found")))
+  (let* ((name
+          (or (python-info-current-defun)
+              (save-excursion
+                ;; As a fallback, jumping seems to make it work on empty lines.
+                (python-nav-beginning-of-defun)
+                (python-nav-forward-statement)
+                (python-info-current-defun))
+              (user-error "No class/function found")))
+         (name
+          ;; Keep at most two parts, e.g. MyClass.do_something
+          (s-join "." (-slice (s-split-up-to "\\." name 2) 0 2)))
+         (name
+          ;; If the first part starts with a lowercase letter, it is likely
+          ;; a function, not a class. Keep the first part and discard
+          ;; nested function names or nested class names, if any.
+          (if (s-lowercase? (substring name 0 1))
+              (car (s-split-up-to "\\." name 1))
+            name)))
+    name))
 
 (defun python-pytest--make-test-name (func)
   "Turn function name FUNC into a name (hopefully) matching its test name.
