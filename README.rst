@@ -72,35 +72,32 @@ screenshot
 ::
 
   Switches
-  -c color (--color)
-  -d debug on error (--pdb)
-  -f failed first (--failed-first)
-  -l show locals (--showlocals)
-  -q quiet (--quiet)
-  -s do not capture output (--capture=no)
-  -t do not cut tracebacks (--full-trace)
-  -v verbose (--verbose)
-  -x exit after first failure (--exitfirst)
+   -c color (--color)
+   -d run doctests (--doctest-modules)
+   -f failed first (--failed-first)
+   -l show locals (--showlocals)
+   -p debug on error (--pdb)
+   -q quiet (--quiet)
+   -s do not capture output (--capture=no)
+   -t do not cut tracebacks (--full-trace)
+   -v verbose (--verbose)
+   -x exit after first failure (--exitfirst)
 
   Options
-  =k only names matching expression (-k)
-  =m only marks matching expression (-m)
-  =t traceback style (--tb=)
-  =x exit after N failures or errors (--maxfail=)
+   =k only names matching expression (-k)
+   =m only marks matching expression (-m)
+   =t traceback style (--tb=)
+   =x exit after N failures or errors (--maxfail="10")
+   == extra arguments (... )
 
   Run tests
-  t Test all            x Test last-failed
+   t Test all                r Repeat last test run    x Test last-failed
 
-  Run tests for current context
-  f Test file           F Test this file
-  d Test def/class      D This def/class
+  Run tests for specific files
+   f Test file (dwim)       F Test this file         m Test multiple files
 
-  Repeat tests
-  r Repeat last test run
-
-  Common Commands
-  C-c C-c Set defaults       C-h i View popup manual    C-t Toggle this section
-  C-x C-s Save defaults      ?     Popup help prefix    C-g Abort
+  Run tests for current function/class
+   d Test def/class (dwim)    D Test this def/class
 
 
 installation
@@ -193,6 +190,7 @@ the available commands are:
 - ``python-pytest``
 - ``python-pytest-file``
 - ``python-pytest-file-dwim``
+- ``python-pytest-files``
 - ``python-pytest-function``
 - ``python-pytest-function-dwim``
 - ``python-pytest-last-failed``
@@ -364,7 +362,11 @@ __ https://stable.melpa.org/
 1.x (…)
 -------
 
-* …
+* add python-pytest-files command with interactive multi-file selection
+
+* improve python-pytest-file-dwim heuristic for nested functions/classes
+
+* make ``next-error`` and related-commands work
 
 1.0.0 (2018-06-14)
 ------------------
