@@ -88,7 +88,6 @@ screenshot
    =m only marks matching expression (-m)
    =t traceback style (--tb=)
    =x exit after N failures or errors (--maxfail="10")
-   == extra arguments (... )
 
   Run tests
    t Test all                r Repeat last test run    x Test last-failed
