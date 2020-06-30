@@ -35,6 +35,7 @@
 
 ;;; Code:
 
+(require 'cl-lib)
 (require 'comint)
 (require 'compile)
 (require 'python)
@@ -158,15 +159,16 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
   :actions
   '("Run tests"
     (?t "Test all" python-pytest)
+    (?r "Repeat last test run" python-pytest-repeat)
     (?x "Test last-failed" python-pytest-last-failed)
-    "Run tests for current context"
-    (?f "Test file" python-pytest-file-dwim)
-    (?F "Test this file  " python-pytest-file)
-    (?d "Test def/class" python-pytest-function-dwim)
-    (?D "This def/class" python-pytest-function)
-    "Repeat tests"
-    (?r "Repeat last test run" python-pytest-repeat))
-  :max-action-columns 2
+    "Run tests for specific files"
+    (?f "Test file (dwim)" python-pytest-file-dwim)
+    (?F "Test this file" python-pytest-file)
+    (?m "Test multiple files" python-pytest-files)
+    "Run tests for current function/class"
+    (?d "Test def/class (dwim)" python-pytest-function-dwim)
+    (?D "Test this def/class" python-pytest-function))
+  :max-action-columns 3
   :default-action 'python-pytest-repeat)
 
 ;;;###autoload
@@ -208,6 +210,23 @@ With a prefix argument, allow editing."
     (buffer-file-name)
     (python-pytest-arguments)))
   (python-pytest-file (python-pytest--sensible-test-file file) args))
+
+;;;###autoload
+(defun python-pytest-files (files &optional args)
+  "Run pytest on FILES, using ARGS.
+
+When run interactively, this allows for interactive file selection.
+
+Additional ARGS are passed along to pytest.
+With a prefix argument, allow editing."
+  (interactive
+   (list
+    (python-pytest--select-test-files)
+    (python-pytest-arguments)))
+  (setq args (-concat args (-map 'python-pytest--shell-quote files)))
+  (python-pytest--run
+   :args args
+   :edit current-prefix-arg))
 
 ;;;###autoload
 (defun python-pytest-function (file func args)
@@ -504,6 +523,32 @@ Example: ‘MyABCThingy.__repr__’ becomes ‘test_my_abc_thingy_repr’."
   (if (python-pytest--test-file-p file)
       (python-pytest--relative-file-name file)
     (python-pytest--find-test-file file)))
+
+(cl-defun python-pytest--select-test-files ()
+  "Interactively choose test files."
+  (cl-block nil
+    (let ((test-files
+           (->> (projectile-project-files (python-pytest--project-root))
+                (-sort 'string<)
+                (projectile-sort-by-recentf-first)
+                (projectile-test-files)))
+          (done-message (propertize "[finish test file selection]" 'face 'success))
+          (choices)
+          (choice)
+          (selection-active t))
+      (unless test-files
+        (user-error "No test files found"))
+      (while (and selection-active test-files)
+        (setq choice (completing-read
+                      "Choose test files: "
+                      (if choices (cons done-message test-files) test-files)
+                      nil t))
+        (if (s-equals-p choice done-message)
+            (setq selection-active nil)
+          (setq
+           choices (cons choice choices)
+           test-files (-remove-item choice test-files))))
+      (cl-return (reverse choices)))))
 
 (defun python-pytest--maybe-save-buffers ()
   "Maybe save modified buffers."
