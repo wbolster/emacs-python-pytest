@@ -133,6 +133,7 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
     (?s "do not capture output" "--capture=no")
     (?t "do not cut tracebacks" "--full-trace")
     (?v "verbose" "--verbose")
+    (?w "very verbose" "-vv")
     (?x "exit after first failure" "--exitfirst"))
   :options
   '((?k "only names matching expression" "-k")
