@@ -135,7 +135,7 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
     (?q "quiet" "--quiet")
     (?s "do not capture output" "--capture=no")
     (?t "do not cut tracebacks" "--full-trace")
-    (?v "verbose" python-pytest--cycle-verbosity)
+    (?v python-pytest--cycle-verbosity "verbose")
     (?x "exit after first failure" "--exitfirst"))
   :options
   '((?k "only names matching expression" "-k")
