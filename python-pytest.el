@@ -116,6 +116,9 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
 (defvar-local python-pytest--current-command nil
   "Current command; used in python-pytest-mode buffers.")
 
+(defvar-local python-pytest--verbosity-level 0
+  "Verbosity level.")
+
 (fmakunbound 'python-pytest-popup)
 (makunbound 'python-pytest-popup)
 
@@ -132,7 +135,7 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
     (?q "quiet" "--quiet")
     (?s "do not capture output" "--capture=no")
     (?t "do not cut tracebacks" "--full-trace")
-    (?v "verbose" "--verbose")
+    (?v "verbose" python-pytest--cycle-verbosity)
     (?x "exit after first failure" "--exitfirst"))
   :options
   '((?k "only names matching expression" "-k")
@@ -559,6 +562,18 @@ Example: ‘MyABCThingy.__repr__’ becomes ‘test_my_abc_thingy_repr’."
         (with-current-buffer it
           (save-buffer)))))
    (t nil)))
+
+
+(defun python-pytest--cycle-verbosity ()
+  "Cycle the verbosity level from 0 (no -v flag) to 2 (-vv flag)."
+  (cond
+   ((memq python-pytest--verbosity '(0 1))
+    (setq python-pytest--verbosity (+ 1 python-pytest--verbosity)))
+   (t (setq python-pytest--verbosity 0)))
+  (cond
+   ((= python-pytest--verbosity 0) "")
+   ((= python-pytest--verbosity 1) "-v")
+   ((= python-pytest--verbosity 2) "-vv")))
 
 
 ;; third party integration
