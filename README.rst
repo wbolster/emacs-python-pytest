@@ -367,6 +367,8 @@ __ https://stable.melpa.org/
 
 * make ``next-error`` and related-commands work
 
+* add a ``-w`` shortcut for very verbose (``--verbose --verbose``)
+
 1.0.0 (2018-06-14)
 ------------------
 
