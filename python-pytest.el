@@ -123,8 +123,7 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
 (makunbound 'python-pytest-popup)
 
 ;;;###autoload (autoload 'python-pytest-popup "python-pytest" nil t)
-(magit
- -define-popup python-pytest-popup
+(magit-define-popup python-pytest-popup
   "Show popup for running pytest."
   'python-pytest
   :switches
