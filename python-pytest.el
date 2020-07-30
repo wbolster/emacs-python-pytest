@@ -110,6 +110,9 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
 (defvar python-pytest--history nil
   "History for pytest invocations.")
 
+(defvar python-pytest--extra-args-history nil
+  "History for the extra arguments prompt.")
+
 (defvar python-pytest--project-last-command (make-hash-table :test 'equal)
   "Last executed command lines, per project.")
 
@@ -138,7 +141,8 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
   '((?k "only names matching expression" "-k")
     (?m "only marks matching expression" "-m")
     (?t "traceback style" "--tb=" python-pytest--choose-traceback-style)
-    (?x "exit after N failures or errors" "--maxfail="))
+    (?x "exit after N failures or errors" "--maxfail=")
+    (?= "extra arguments" "... " python-pytest--read-extra-args))
   :actions
   '("Run tests"
     (?t "Test all" python-pytest)
@@ -406,7 +410,8 @@ With a prefix ARG, allow editing."
    args
    (python-pytest--switch-to-option it "--color" "--color=yes" "--color=no")
    (python-pytest--quote-string-option it "-k")
-   (python-pytest--quote-string-option it "-m")))
+   (python-pytest--quote-string-option it "-m")
+   (python-pytest--clean-extra-args it)))
 
 (defun python-pytest--switch-to-option (args name on-replacement off-replacement)
   "Look in ARGS for switch NAME and turn it into option with a value.
@@ -427,6 +432,17 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
           (python-pytest--shell-quote it)
           (format "%s %s" option it)))
    args))
+
+(defun python-pytest--clean-extra-args (args)
+  "Transform extra ARGS into a plain string without the prefix."
+  (--map (s-chop-prefix "... " it) args))
+
+(defun python-pytest--read-extra-args (_prompt _value)
+  "Read extra arguments from the mini buffer."
+  (read-from-minibuffer
+   "extra args: "
+   nil nil nil
+   'python-pytest--extra-args-history))
 
 (defun python-pytest--choose-traceback-style (prompt _value)
   "Helper to choose a pytest traceback style using PROMPT."
