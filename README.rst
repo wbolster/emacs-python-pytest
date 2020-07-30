@@ -287,7 +287,7 @@ the available variables are:
 
   the name of the pytest executable (``pytest`` by default)
 
-– ``python-pytest-unsaved-buffers-behavior``
+- ``python-pytest-unsaved-buffers-behavior``
 
   whether to ask whether unsaved buffers should be saved before
   running pytest. the check for unsaved buffers can be for only the
