@@ -2,7 +2,7 @@
 
 ;; Author: wouter bolsterlee <wouter@bolsterl.ee>
 ;; Version: 1.0.0
-;; Package-Requires: ((emacs "24.4") (dash "2.12.0") (dash-functional "2.12.0") (magit-popup "2.12.0") (projectile "0.14.0") (s "1.12.0"))
+;; Package-Requires: ((emacs "24.4") (dash "2.12.0") (dash-functional "2.12.0") (transient "20200719") (projectile "0.14.0") (s "1.12.0"))
 ;; Keywords: pytest, test, python, languages, processes, tools
 ;; URL: https://github.com/wbolster/emacs-python-pytest
 ;;
@@ -25,7 +25,7 @@
 
 (require 'dash)
 (require 'dash-functional)
-(require 'magit-popup)
+(require 'transient)
 (require 'projectile)
 (require 's)
 
@@ -120,40 +120,39 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
 (makunbound 'python-pytest-popup)
 
 ;;;###autoload (autoload 'python-pytest-popup "python-pytest" nil t)
-(magit-define-popup python-pytest-popup
+(define-transient-command python-pytest-popup ()
   "Show popup for running pytest."
-  'python-pytest
-  :switches
-  '((?c "color" "--color" t)
-    (?d "run doctests" "--doctest-modules")
-    (?f "failed first" "--failed-first")
-    (?l "show locals" "--showlocals")
-    (?p "debug on error" "--pdb")
-    (?q "quiet" "--quiet")
-    (?s "do not capture output" "--capture=no")
-    (?t "do not cut tracebacks" "--full-trace")
-    (?v "verbose" "--verbose")
-    (?w "very verbose" "-vv")
-    (?x "exit after first failure" "--exitfirst"))
-  :options
-  '((?k "only names matching expression" "-k")
-    (?m "only marks matching expression" "-m")
-    (?t "traceback style" "--tb=" python-pytest--choose-traceback-style)
-    (?x "exit after N failures or errors" "--maxfail="))
-  :actions
-  '("Run tests"
-    (?t "Test all" python-pytest)
-    (?r "Repeat last test run" python-pytest-repeat)
-    (?x "Test last-failed" python-pytest-last-failed)
-    "Run tests for specific files"
-    (?f "Test file (dwim)" python-pytest-file-dwim)
-    (?F "Test this file" python-pytest-file)
-    (?m "Test multiple files" python-pytest-files)
-    "Run tests for current function/class"
-    (?d "Test def/class (dwim)" python-pytest-function-dwim)
-    (?D "Test this def/class" python-pytest-function))
-  :max-action-columns 3
-  :default-action 'python-pytest-repeat)
+  :man-page "pytest"
+  :incompatible '(("--verbose" "--verbose --verbose"))
+  :value '("--color")
+  ["Switches"
+   ("-c" "color" "--color")
+   ("-d" "run doctests" "--doctest-modules")
+   ("-f" "failed first" "--failed-first")
+   ("-l" "show locals" "--showlocals")
+   ("-p" "debug on error" "--pdb")
+   ("-q" "quiet" "--quiet")
+   ("-s" "do not capture output" "--capture=no")
+   ("-t" "do not cut tracebacks" "--full-trace")
+   ("-v" "verbose" ("-v" "--verbose"))
+   ("-w" "very verbose" ("-vv" "--verbose --verbose"))
+   ("-x" "exit after first failure" "--exitfirst")]
+  ["Options"
+   ("=k" "only names matching expression" "-k=")
+   ("=m" "only marks matching expression" "-m=")
+   (python-pytest-popup:--tb)
+   ("=x" "exit after N failures or errors" "--maxfail=")]
+  [["Run tests"
+    ("t" "Test all" python-pytest)
+    ("r" "Repeat last test run" python-pytest-repeat)
+    ("x" "Test last-failed" python-pytest-last-failed)]
+   ["Run tests for specific files"
+    ("f" "Test file (dwim)" python-pytest-file-dwim)
+    ("F" "Test this file" python-pytest-file)
+    ("m" "Test multiple files" python-pytest-files)]
+   ["Run tests for current function/class"
+    ("d" "Test def/class (dwim)" python-pytest-function-dwim)
+    ("D" "Test this def/class" python-pytest-function)]])
 
 ;;;###autoload
 (defun python-pytest (&optional args)
@@ -388,13 +387,12 @@ With a prefix ARG, allow editing."
 
 (defun python-pytest--get-buffer ()
   "Get a create a suitable compilation buffer."
-  (magit-with-pre-popup-buffer
-    (if (eq major-mode 'python-pytest-mode)
-        (current-buffer)  ;; re-use buffer
-      (let ((name python-pytest-buffer-name))
-        (when python-pytest-project-name-in-buffer-name
-          (setq name (format "%s<%s>" name (python-pytest--project-name))))
-        (get-buffer-create name)))))
+  (if (eq major-mode 'python-pytest-mode)
+      (current-buffer)  ;; re-use buffer
+    (let ((name python-pytest-buffer-name))
+      (when python-pytest-project-name-in-buffer-name
+        (setq name (format "%s<%s>" name (python-pytest--project-name))))
+      (get-buffer-create name))))
 
 (defun python-pytest--process-sentinel (proc _state)
   "Process sentinel helper to run hooks after PROC finishes."
@@ -429,10 +427,15 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
           (format "%s %s" option it)))
    args))
 
-(defun python-pytest--choose-traceback-style (prompt _value)
-  "Helper to choose a pytest traceback style using PROMPT."
-  (completing-read
-   prompt '("long" "short" "line" "native" "no") nil t))
+(transient-define-argument python-pytest-popup:--tb ()
+  :description "traceback style"
+  :class 'transient-option
+  :key "=t"
+  :argument "--tb="
+  :choices '("long" "short" "line" "native" "no"))
+
+(defun python-pytest-arguments ()
+  (transient-args 'python-pytest-popup))
 
 
 ;; python helpers

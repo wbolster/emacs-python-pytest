@@ -18,11 +18,11 @@ __ https://www.gnu.org/software/emacs/
 __ https://pytest.org/
 
 most functionality can be used via
-a dispatcher popup menu built using `magit-popup`__,
+a dispatcher popup menu built using `transient`__,
 which gives a look and feel
 similar to the fantastic `magit`__ package.
 
-__ https://magit.vc/manual/magit-popup.html
+__ https://magit.vc/manual/transient
 __ https://magit.vc/
 
 
@@ -81,22 +81,19 @@ screenshot
    -s do not capture output (--capture=no)
    -t do not cut tracebacks (--full-trace)
    -v verbose (--verbose)
+   -w very verbose (--verbose --verbose)
    -x exit after first failure (--exitfirst)
 
   Options
-   =k only names matching expression (-k)
-   =m only marks matching expression (-m)
+   =k only names matching expression (-k=)
+   =m only marks matching expression (-m=)
    =t traceback style (--tb=)
-   =x exit after N failures or errors (--maxfail="10")
+   =x exit after N failures or errors (--maxfail=)
 
-  Run tests
-   t Test all                r Repeat last test run    x Test last-failed
-
-  Run tests for specific files
-   f Test file (dwim)       F Test this file         m Test multiple files
-
-  Run tests for current function/class
-   d Test def/class (dwim)    D Test this def/class
+  Run tests                 Run tests for specific files              Run tests for current function/class
+   t Test all                f Test file (dwim)                        d Test def/class (dwim)
+   r Repeat last test run    F Test this file                          D Test this def/classx
+   x Test last-failed        m Test multiple files
 
 
 installation
@@ -316,9 +313,9 @@ extending the popup
 
 when using pytest plugins that provide extra switches,
 it may be useful to integrate those into the popup.
-see the `magit-popup`__ manual for more information.
+see the `transient`__ manual for more information.
 
-__ https://magit.vc/manual/magit-popup.html
+__ https://magit.vc/manual/transient
 
 as an example, this will add a ``-z`` switch that,
 when enabled, will invoke ``pytest --zzz``:
@@ -327,8 +324,10 @@ when enabled, will invoke ``pytest --zzz``:
 
   (use-package python-pytest
    :config
-   (magit-define-popup-switch 'python-pytest-popup
-    ?z "Custom flag" "--zzz"))
+   (transient-append-suffix
+     'foo-popup2
+     "-x"
+     '("-z" "Custom flag" "--zzz")))
 
 
 contributing
