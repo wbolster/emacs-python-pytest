@@ -330,6 +330,13 @@ when enabled, will invoke ``pytest --zzz``:
      '("-z" "Custom flag" "--zzz")))
 
 
+`transient` lets you save defaults you want for it. Just
+select all options on ``python-pytest-popup`` and then
+- ``C-x C-s`` to save current settings as default and make
+  them persistent,
+- ``C-x s`` to save current settings as default for the
+  current emacs session.
+
 contributing
 ============
 
