@@ -116,11 +116,11 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
 (defvar-local python-pytest--current-command nil
   "Current command; used in python-pytest-mode buffers.")
 
-(fmakunbound 'python-pytest-popup)
-(makunbound 'python-pytest-popup)
+(fmakunbound 'python-pytest-dispatch)
+(makunbound 'python-pytest-dispatch)
 
-;;;###autoload (autoload 'python-pytest-popup "python-pytest" nil t)
-(define-transient-command python-pytest-popup ()
+;;;###autoload (autoload 'python-pytest-dispatch "python-pytest" nil t)
+(define-transient-command python-pytest-dispatch ()
   "Show popup for running pytest."
   :man-page "pytest"
   :incompatible '(("--verbose" "--verbose --verbose"))
@@ -140,7 +140,7 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
   ["Options"
    ("=k" "only names matching expression" "-k=")
    ("=m" "only marks matching expression" "-m=")
-   (python-pytest-popup:--tb)
+   (python-pytest-dispatch:--tb)
    ("=x" "exit after N failures or errors" "--maxfail=")]
   [["Run tests"
     ("t" "Test all" python-pytest)
@@ -153,6 +153,9 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
    ["Run tests for current function/class"
     ("d" "Test def/class (dwim)" python-pytest-function-dwim)
     ("D" "Test this def/class" python-pytest-function)]])
+
+(define-obsolete-function-alias 'python-pytest-popup
+  'python-pytest-dispatch "python-pytest 0.3.2")
 
 ;;;###autoload
 (defun python-pytest (&optional args)
@@ -427,7 +430,7 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
           (format "%s %s" option it)))
    args))
 
-(transient-define-argument python-pytest-popup:--tb ()
+(transient-define-argument python-pytest-dispatch:--tb ()
   :description "traceback style"
   :class 'transient-option
   :key "=t"
@@ -435,7 +438,7 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
   :choices '("long" "short" "line" "native" "no"))
 
 (defun python-pytest-arguments ()
-  (transient-args 'python-pytest-popup))
+  (transient-args 'python-pytest-dispatch))
 
 
 ;; python helpers

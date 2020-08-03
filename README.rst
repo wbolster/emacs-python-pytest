@@ -130,13 +130,13 @@ basics
 ------
 
 the typical usage pattern is to invoke the popup menu,
-named ``python-pytest-popup``.
+named ``python-pytest-dispatch``.
 it is a good idea to create a dedicated keybinding for this command,
 but it can also be run manually:
 
 ::
 
-  M-x python-pytest-popup
+  M-x python-pytest-dispatch
 
 this shows a dispatcher menu.
 change some switches and options,
@@ -331,7 +331,7 @@ when enabled, will invoke ``pytest --zzz``:
 
 
 `transient` lets you save defaults you want for it. Just
-select all options on ``python-pytest-popup`` and then
+select all options on ``python-pytest-dispatch`` and then
 - ``C-x C-s`` to save current settings as default and make
   them persistent,
 - ``C-x s`` to save current settings as default for the
@@ -397,7 +397,7 @@ __ https://stable.melpa.org/
 ------------------
 
 * repopulate the popup with the previously used values
-  when running ``python-pytest-popup`` from an output buffer.
+  when running ``python-pytest-dispatch`` from an output buffer.
   (`#3 <https://github.com/wbolster/emacs-python-pytest/issues/3>`_)
 
 0.2.2 (2018-02-26)
