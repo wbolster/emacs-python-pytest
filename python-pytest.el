@@ -137,7 +137,7 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
   ["Options"
    ("=k" "only names matching expression" "-k=")
    ("=m" "only marks matching expression" "-m=")
-   (python-pytest-dispatch:--tb)
+   (python-pytest:--tb)
    ("=x" "exit after N failures or errors" "--maxfail=")]
   [["Run tests"
     ("t" "Test all" python-pytest)
@@ -426,7 +426,7 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
           (format "%s %s" option it)))
    args))
 
-(transient-define-argument python-pytest-dispatch:--tb ()
+(transient-define-argument python-pytest:--tb ()
   :description "traceback style"
   :class 'transient-option
   :key "=t"
