@@ -151,8 +151,7 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
     ("d" "Test def/class (dwim)" python-pytest-function-dwim)
     ("D" "Test this def/class" python-pytest-function)]])
 
-(define-obsolete-function-alias 'python-pytest-popup
-  'python-pytest-dispatch "python-pytest 0.3.2")
+(define-obsolete-function-alias 'python-pytest-popup 'python-pytest-dispatch)
 
 ;;;###autoload
 (defun python-pytest (&optional args)
