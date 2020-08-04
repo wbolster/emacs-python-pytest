@@ -330,8 +330,10 @@ when enabled, will invoke ``pytest --zzz``:
      '("-z" "Custom flag" "--zzz")))
 
 
-`transient` lets you save defaults you want for it. Just
-select all options on ``python-pytest-dispatch`` and then
+`transient` lets you save defaults you want for it.
+just select all options on ``python-pytest-dispatch``
+and then
+
 - ``C-x C-s`` to save current settings as default and make
   them persistent,
 - ``C-x s`` to save current settings as default for the
@@ -366,8 +368,13 @@ __ https://melpa.org/
 __ https://stable.melpa.org/
 
 
-1.x (…)
--------
+2.0.0 (2020-08-04)
+------------------
+
+* switch to ``transient`` (``magit-popup`` replacement);
+  the command for the menu is now ``python-pytest-dispatch``
+  (`#18 <https://github.com/wbolster/emacs-python-pytest/issues/18>`_)
+  (`#26 <https://github.com/wbolster/emacs-python-pytest/pull/26>`_)
 
 * add python-pytest-files command with interactive multi-file selection
 
@@ -376,6 +383,7 @@ __ https://stable.melpa.org/
 * make ``next-error`` and related-commands work
 
 * add a ``-w`` shortcut for very verbose (``--verbose --verbose``)
+  (`#24 <https://github.com/wbolster/emacs-python-pytest/pull/24>`_)
 
 1.0.0 (2018-06-14)
 ------------------
