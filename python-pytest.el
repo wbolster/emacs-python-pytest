@@ -116,9 +116,6 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
 (defvar-local python-pytest--current-command nil
   "Current command; used in python-pytest-mode buffers.")
 
-(fmakunbound 'python-pytest-dispatch)
-(makunbound 'python-pytest-dispatch)
-
 ;;;###autoload (autoload 'python-pytest-dispatch "python-pytest" nil t)
 (define-transient-command python-pytest-dispatch ()
   "Show popup for running pytest."
