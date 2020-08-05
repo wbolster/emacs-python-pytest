@@ -324,10 +324,18 @@ when enabled, will invoke ``pytest --zzz``:
 
   (use-package python-pytest
    :config
+   ;; just an extra `-y' after the `-x' suffix
    (transient-append-suffix
-     'foo-popup2
+     'python-pytest-dispatch
      "-x"
-     '("-z" "Custom flag" "--zzz")))
+     ("-y" "The Y" "-y"))
+   ;; group with `-z' after second from the last group,
+   ;; that is before `Run tests'
+   (transient-append-suffix
+     'python-pytest-dispatch
+     '(-2)
+     ["My Z"
+      ("-z" "The Z" "-z")]))
 
 
 `transient` lets you save defaults you want for it.
