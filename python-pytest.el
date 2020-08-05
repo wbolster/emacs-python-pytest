@@ -120,7 +120,6 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
 (define-transient-command python-pytest-dispatch ()
   "Show popup for running pytest."
   :man-page "pytest"
-  :incompatible '(("--verbose" "--verbose --verbose"))
   :value '("--color")
   ["Switches"
    ("-c" "color" "--color")
@@ -131,8 +130,7 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
    ("-q" "quiet" "--quiet")
    ("-s" "do not capture output" "--capture=no")
    ("-t" "do not cut tracebacks" "--full-trace")
-   ("-v" "verbose" ("-v" "--verbose"))
-   ("-w" "very verbose" ("-vv" "--verbose --verbose"))
+   (python-pytest:-v)
    ("-x" "exit after first failure" "--exitfirst")]
   ["Options"
    ("=k" "only names matching expression" "-k=")
@@ -425,6 +423,14 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
           (python-pytest--shell-quote it)
           (format "%s %s" option it)))
    args))
+
+(transient-define-argument python-pytest:-v ()
+  :description "verbosity"
+  :class 'transient-switches
+  :key "-v"
+  :argument-format "%s"
+  :argument-regexp "\\(--verbose\\|--verbose --verbose\\)"
+  :choices '("--verbose" "--verbose --verbose"))
 
 (transient-define-argument python-pytest:--tb ()
   :description "traceback style"
