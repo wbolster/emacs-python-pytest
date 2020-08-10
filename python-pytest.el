@@ -149,11 +149,11 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
    [("r" "repeat" python-pytest-repeat)
     ("x" "last failed" python-pytest-last-failed)]
    [("f" "file (dwim)" python-pytest-file-dwim)
-    ("f" "this file" python-pytest-file)]
+    ("f" "file (this)" python-pytest-file)]
    [("m" "files" python-pytest-files)
     ("m" "directories" python-pytest-directories)]
    [("d" "def/class (dwim)" python-pytest-function-dwim)
-    ("d" "this def/class" python-pytest-function)]])
+    ("d" "def/class (this)" python-pytest-function)]])
 
 (define-obsolete-function-alias 'python-pytest-popup 'python-pytest-dispatch)
 
