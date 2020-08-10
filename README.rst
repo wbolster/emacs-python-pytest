@@ -379,18 +379,26 @@ __ https://stable.melpa.org/
 3.0.0 (not yet released)
 ------------------------
 
+* redesign the menu:
+  use better groupings,
+  use multi-column visual layout,
+  add some more flags,
+  make all flags start with either ``-`` or ``--``
+  (mostly mimicking pytest flags)
+  (`#28 <https://github.com/wbolster/emacs-python-pytest/pull/28>`_)
+
 * add a ``python-pytest-directories`` command with interactive
   multi-directory selection
-  (`#21 <https://github.com/wbolster/emacs-python-pytest/issues/21>`_)
-  (`#31 <https://github.com/wbolster/emacs-python-pytest/pull/31>`_)
+  (`#21 <https://github.com/wbolster/emacs-python-pytest/issues/21>`_,
+  `#31 <https://github.com/wbolster/emacs-python-pytest/pull/31>`_)
 
 2.0.0 (2020-08-04)
 ------------------
 
 * switch to ``transient`` (``magit-popup`` replacement);
   the command for the menu is now ``python-pytest-dispatch``
-  (`#18 <https://github.com/wbolster/emacs-python-pytest/issues/18>`_)
-  (`#26 <https://github.com/wbolster/emacs-python-pytest/pull/26>`_)
+  (`#18 <https://github.com/wbolster/emacs-python-pytest/issues/18>`_,
+  `#26 <https://github.com/wbolster/emacs-python-pytest/pull/26>`_)
 
 * add ``python-pytest-files`` command with interactive multi-file
   selection
