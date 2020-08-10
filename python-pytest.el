@@ -144,7 +144,8 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
    ["Run tests for specific files"
     ("f" "Test file (dwim)" python-pytest-file-dwim)
     ("F" "Test this file" python-pytest-file)
-    ("m" "Test multiple files" python-pytest-files)]
+    ("m" "Test multiple files" python-pytest-files)
+    ("m" "Test multiple directories" python-pytest-directories)]
    ["Run tests for current function/class"
     ("d" "Test def/class (dwim)" python-pytest-function-dwim)
     ("D" "Test this def/class" python-pytest-function)]])
@@ -201,9 +202,26 @@ Additional ARGS are passed along to pytest.
 With a prefix argument, allow editing."
   (interactive
    (list
-    (python-pytest--select-test-files)
+    (python-pytest--select-test-files :type 'file)
     (python-pytest-arguments)))
   (setq args (-concat args (-map 'python-pytest--shell-quote files)))
+  (python-pytest--run
+   :args args
+   :edit current-prefix-arg))
+
+;;;###autoload
+(defun python-pytest-directories (directories &optional args)
+  "Run pytest on DIRECTORIES, using ARGS.
+
+When run interactively, this allows for interactive directory selection.
+
+Additional ARGS are passed along to pytest.
+With a prefix argument, allow editing."
+  (interactive
+   (list
+    (python-pytest--select-test-files :type 'directory)
+    (python-pytest-arguments)))
+  (setq args (-concat args (-map 'python-pytest--shell-quote directories)))
   (python-pytest--run
    :args args
    :edit current-prefix-arg))
@@ -516,30 +534,36 @@ Example: ‘MyABCThingy.__repr__’ becomes ‘test_my_abc_thingy_repr’."
       (python-pytest--relative-file-name file)
     (python-pytest--find-test-file file)))
 
-(cl-defun python-pytest--select-test-files ()
+(cl-defun python-pytest--select-test-files (&key type)
   "Interactively choose test files."
   (cl-block nil
-    (let ((test-files
-           (->> (projectile-project-files (python-pytest--project-root))
-                (-sort 'string<)
-                (projectile-sort-by-recentf-first)
-                (projectile-test-files)))
-          (done-message (propertize "[finish test file selection]" 'face 'success))
-          (choices)
-          (choice)
-          (selection-active t))
-      (unless test-files
+    (let* ((test-files
+            (->> (projectile-project-files (python-pytest--project-root))
+                 (-sort 'string<)
+                 (projectile-sort-by-recentf-first)
+                 (projectile-test-files)))
+           (test-directories
+            (->> test-files
+                 (-map 'file-name-directory)
+                 (-uniq)
+                 (-sort 'string<)))
+           (candidates (if (eq type 'file) test-files test-directories))
+           (done-message (propertize "[finish test file selection]" 'face 'success))
+           (choices)
+           (choice)
+           (selection-active t))
+      (unless candidates
         (user-error "No test files found"))
-      (while (and selection-active test-files)
+      (while (and selection-active candidates)
         (setq choice (completing-read
                       "Choose test files: "
-                      (if choices (cons done-message test-files) test-files)
+                      (if choices (cons done-message candidates) candidates)
                       nil t))
         (if (s-equals-p choice done-message)
             (setq selection-active nil)
           (setq
            choices (cons choice choices)
-           test-files (-remove-item choice test-files))))
+           candidates (-remove-item choice candidates))))
       (cl-return (reverse choices)))))
 
 (defun python-pytest--maybe-save-buffers ()

@@ -376,6 +376,14 @@ __ https://melpa.org/
 __ https://stable.melpa.org/
 
 
+3.0.0 (not yet released)
+------------------------
+
+* add a ``python-pytest-directories`` command with interactive
+  multi-directory selection
+  (`#21 <https://github.com/wbolster/emacs-python-pytest/issues/21>`_)
+  (`#31 <https://github.com/wbolster/emacs-python-pytest/pull/31>`_)
+
 2.0.0 (2020-08-04)
 ------------------
 
@@ -384,9 +392,10 @@ __ https://stable.melpa.org/
   (`#18 <https://github.com/wbolster/emacs-python-pytest/issues/18>`_)
   (`#26 <https://github.com/wbolster/emacs-python-pytest/pull/26>`_)
 
-* add python-pytest-files command with interactive multi-file selection
+* add ``python-pytest-files`` command with interactive multi-file
+  selection
 
-* improve python-pytest-file-dwim heuristic for nested functions/classes
+* improve ``python-pytest-file-dwim`` heuristic for nested functions/classes
 
 * make ``next-error`` and related-commands work
 
