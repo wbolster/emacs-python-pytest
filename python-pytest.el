@@ -120,35 +120,40 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
 (define-transient-command python-pytest-dispatch ()
   "Show popup for running pytest."
   :man-page "pytest"
+  :incompatible '(("--exitfirst" "--maxfail="))
   :value '("--color")
-  ["Switches"
-   ("-c" "color" "--color")
-   ("-d" "run doctests" "--doctest-modules")
-   ("-f" "failed first" "--failed-first")
-   ("-l" "show locals" "--showlocals")
-   ("-p" "debug on error" "--pdb")
-   ("-q" "quiet" "--quiet")
-   ("-s" "do not capture output" "--capture=no")
-   ("-t" "do not cut tracebacks" "--full-trace")
-   (python-pytest:-v)
-   ("-x" "exit after first failure" "--exitfirst")]
-  ["Options"
-   ("=k" "only names matching expression" "-k=")
-   ("=m" "only marks matching expression" "-m=")
-   (python-pytest:--tb)
-   ("=x" "exit after N failures or errors" "--maxfail=")]
-  [["Run tests"
-    ("t" "Test all" python-pytest)
-    ("r" "Repeat last test run" python-pytest-repeat)
-    ("x" "Test last-failed" python-pytest-last-failed)]
-   ["Run tests for specific files"
-    ("f" "Test file (dwim)" python-pytest-file-dwim)
-    ("F" "Test this file" python-pytest-file)
-    ("m" "Test multiple files" python-pytest-files)
-    ("m" "Test multiple directories" python-pytest-directories)]
-   ["Run tests for current function/class"
-    ("d" "Test def/class (dwim)" python-pytest-function-dwim)
-    ("D" "Test this def/class" python-pytest-function)]])
+  ["Output"
+   [("-c" "color" "--color")
+    ("-q" "quiet" "--quiet")
+    ("-s" "no output capture" "--capture=no")
+    (python-pytest:-v)]]
+  ["Selection, filtering, ordering"
+   [("-k" "only names matching expression" "-k=")
+    ("-m" "only marks matching expression" "-m=")
+    "                                          "] ;; visual alignment
+   [("--dm" "run doctests" "--doctest-modules")
+    ("--nf" "new first" "--new-first")
+    ("--sw" "stepwise" "--stepwise")]]
+  ["Failures, errors, debugging"
+   [("-l" "show locals" "--showlocals")
+    ("-p" "debug on error" "--pdb")
+    ("-x" "exit after first failure" "--exitfirst")]
+   [("--ff" "failed first" "--failed-first")
+    ("--ft" "full tracebacks" "--full-trace")
+    ("--mf" "exit after N failures or errors" "--maxfail=")
+    ("--rx" "run xfail tests" "--runxfail")
+    (python-pytest:--tb)
+    ("--tr" "debug on each test" "--trace")]]
+  ["Run tests"
+   [("t" "all" python-pytest)]
+   [("r" "repeat" python-pytest-repeat)
+    ("x" "last failed" python-pytest-last-failed)]
+   [("f" "file (dwim)" python-pytest-file-dwim)
+    ("f" "this file" python-pytest-file)]
+   [("m" "files" python-pytest-files)
+    ("m" "directories" python-pytest-directories)]
+   [("d" "def/class (dwim)" python-pytest-function-dwim)
+    ("d" "this def/class" python-pytest-function)]])
 
 (define-obsolete-function-alias 'python-pytest-popup 'python-pytest-dispatch)
 
@@ -453,7 +458,7 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
 (transient-define-argument python-pytest:--tb ()
   :description "traceback style"
   :class 'transient-option
-  :key "=t"
+  :key "--tb"
   :argument "--tb="
   :choices '("long" "short" "line" "native" "no"))
 
