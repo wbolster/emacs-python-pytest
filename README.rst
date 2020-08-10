@@ -375,8 +375,8 @@ __ https://melpa.org/
 __ https://stable.melpa.org/
 
 
-3.0.0 (not yet released)
-------------------------
+3.0.0 (2020-08-10)
+------------------
 
 * redesign the menu:
   use better groupings,
