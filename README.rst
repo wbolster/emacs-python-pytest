@@ -71,29 +71,28 @@ screenshot
 
 ::
 
-  Switches
+  Output
    -c color (--color)
-   -d run doctests (--doctest-modules)
-   -f failed first (--failed-first)
-   -l show locals (--showlocals)
-   -p debug on error (--pdb)
    -q quiet (--quiet)
-   -s do not capture output (--capture=no)
-   -t do not cut tracebacks (--full-trace)
-   -v verbose (--verbose)
-   -w very verbose (--verbose --verbose)
-   -x exit after first failure (--exitfirst)
+   -s no output capture (--capture=no)
+   -v verbosity ([--verbose|--verbose --verbose])
 
-  Options
-   =k only names matching expression (-k=)
-   =m only marks matching expression (-m=)
-   =t traceback style (--tb=)
-   =x exit after N failures or errors (--maxfail=)
+  Selection, filtering, ordering
+   -k only names matching expression (-k=)      --dm run doctests (--doctest-modules)
+   -m only marks matching expression (-m=)      --nf new first (--new-first)
+                                                --sw stepwise (--stepwise)
 
-  Run tests                 Run tests for specific files              Run tests for current function/class
-   t Test all                f Test file (dwim)                        d Test def/class (dwim)
-   r Repeat last test run    F Test this file                          D Test this def/classx
-   x Test last-failed        m Test multiple files
+  Failures, errors, debugging
+   -l show locals (--showlocals)                --ff failed first (--failed-first)
+   -p debug on error (--pdb)                    --ft full tracebacks (--full-trace)
+   -x exit after first failure (--exitfirst)    --mf exit after N failures or errors (--maxfail=10)
+                                                --rx run xfail tests (--runxfail)
+                                                --tb traceback style (--tb=)
+                                                --tr debug on each test (--trace)
+
+  Run tests
+   t all    r repeat         f file (dwim)    m files          d def/class (dwim)
+            x last failed    F file (this)    M directories    D def/class (this)
 
 
 installation
