@@ -157,7 +157,7 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
   "Run pytest with ARGS.
 
 With a prefix argument, allow editing."
-  (interactive (list (python-pytest-arguments)))
+  (interactive (list (transient-args 'python-pytest-dispatch)))
   (python-pytest--run
    :args args
    :edit current-prefix-arg))
@@ -171,7 +171,7 @@ With a prefix argument, allow editing."
   (interactive
    (list
     (buffer-file-name)
-    (python-pytest-arguments)))
+    (transient-args 'python-pytest-dispatch)))
   (python-pytest--run
    :args args
    :file file
@@ -189,7 +189,7 @@ With a prefix argument, allow editing."
   (interactive
    (list
     (buffer-file-name)
-    (python-pytest-arguments)))
+    (transient-args 'python-pytest-dispatch)))
   (python-pytest-file (python-pytest--sensible-test-file file) args))
 
 ;;;###autoload
@@ -203,7 +203,7 @@ With a prefix argument, allow editing."
   (interactive
    (list
     (python-pytest--select-test-files :type 'file)
-    (python-pytest-arguments)))
+    (transient-args 'python-pytest-dispatch)))
   (setq args (-concat args (-map 'python-pytest--shell-quote files)))
   (python-pytest--run
    :args args
@@ -220,7 +220,7 @@ With a prefix argument, allow editing."
   (interactive
    (list
     (python-pytest--select-test-files :type 'directory)
-    (python-pytest-arguments)))
+    (transient-args 'python-pytest-dispatch)))
   (setq args (-concat args (-map 'python-pytest--shell-quote directories)))
   (python-pytest--run
    :args args
@@ -236,7 +236,7 @@ With a prefix argument, allow editing."
    (list
     (buffer-file-name)
     (python-pytest--current-defun)
-    (python-pytest-arguments)))
+    (transient-args 'python-pytest-dispatch)))
   (python-pytest--run
    :args args
    :file file
@@ -256,7 +256,7 @@ With a prefix argument, allow editing."
    (list
     (buffer-file-name)
     (python-pytest--current-defun)
-    (python-pytest-arguments)))
+    (transient-args 'python-pytest-dispatch)))
   (unless (python-pytest--test-file-p file)
     (setq
      file (python-pytest--sensible-test-file file)
@@ -291,7 +291,7 @@ With a prefix argument, allow editing."
 
 Additional ARGS are passed along to pytest.
 With a prefix argument, allow editing."
-  (interactive (list (python-pytest-arguments)))
+  (interactive (list (transient-args 'python-pytest-dispatch)))
   (python-pytest--run
    :args (-snoc args "--last-failed")
    :edit current-prefix-arg))
@@ -312,7 +312,6 @@ With a prefix ARG, allow editing."
       (user-error "No previous pytest run for this project"))
     (python-pytest--run-command
      :command command
-     :popup-arguments python-pytest-arguments
      :edit current-prefix-arg)))
 
 
@@ -325,26 +324,24 @@ With a prefix ARG, allow editing."
 
 (cl-defun python-pytest--run (&key args file func edit)
   "Run pytest for the given arguments."
-  (let ((popup-arguments args))
-    (setq args (python-pytest--transform-arguments args))
-    (when (and file (file-name-absolute-p file))
-      (setq file (python-pytest--relative-file-name file)))
-    (when func
-      (setq func (s-replace "." "::" func)))
-    (let ((command)
-          (thing (cond
-                  ((and file func) (format "%s::%s" file func))
-                  (file file))))
-      (when thing
-        (setq args (-snoc args (python-pytest--shell-quote thing))))
-      (setq args (cons python-pytest-executable args)
-            command (s-join " " args))
-      (python-pytest--run-command
-       :command command
-       :popup-arguments popup-arguments
-       :edit edit))))
+  (setq args (python-pytest--transform-arguments args))
+  (when (and file (file-name-absolute-p file))
+    (setq file (python-pytest--relative-file-name file)))
+  (when func
+    (setq func (s-replace "." "::" func)))
+  (let ((command)
+        (thing (cond
+                ((and file func) (format "%s::%s" file func))
+                (file file))))
+    (when thing
+      (setq args (-snoc args (python-pytest--shell-quote thing))))
+    (setq args (cons python-pytest-executable args)
+          command (s-join " " args))
+    (python-pytest--run-command
+     :command command
+     :edit edit)))
 
-(cl-defun python-pytest--run-command (&key command popup-arguments edit)
+(cl-defun python-pytest--run-command (&key command edit)
   "Run a pytest command line."
   (python-pytest--maybe-save-buffers)
   (let* ((default-directory (python-pytest--project-root)))
@@ -359,11 +356,9 @@ With a prefix ARG, allow editing."
     (setq python-pytest--history (-uniq python-pytest--history))
     (puthash (python-pytest--project-root) command
              python-pytest--project-last-command)
-    (python-pytest--run-as-comint
-     :command command
-     :popup-arguments popup-arguments)))
+    (python-pytest--run-as-comint :command command)))
 
-(cl-defun python-pytest--run-as-comint (&key command popup-arguments)
+(cl-defun python-pytest--run-as-comint (&key command)
   "Run a pytest comint session for COMMAND."
   (let* ((buffer (python-pytest--get-buffer))
          (process (get-buffer-process buffer)))
@@ -379,9 +374,7 @@ With a prefix ARG, allow editing."
         (python-pytest-mode))
       (compilation-forget-errors)
       (insert (format "cwd: %s\ncmd: %s\n\n" default-directory command))
-      (make-local-variable 'python-pytest-arguments)
-      (setq python-pytest--current-command command
-            python-pytest-arguments popup-arguments)
+      (setq python-pytest--current-command command)
       (when python-pytest-pdb-track
         (add-hook
          'comint-output-filter-functions
@@ -456,9 +449,6 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
   :key "=t"
   :argument "--tb="
   :choices '("long" "short" "line" "native" "no"))
-
-(defun python-pytest-arguments ()
-  (transient-args 'python-pytest-dispatch))
 
 
 ;; python helpers
