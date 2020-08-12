@@ -591,8 +591,9 @@ Example: ‘MyABCThingy.__repr__’ becomes ‘test_my_abc_thingy_repr’."
 
 ;; third party integration
 
-(defvar direnv-non-file-modes)
-(add-to-list 'direnv-non-file-modes 'python-pytest-mode)
+(with-eval-after-load 'direnv
+  (defvar direnv-non-file-modes)
+  (add-to-list 'direnv-non-file-modes 'python-pytest-mode))
 
 
 (provide 'python-pytest)
