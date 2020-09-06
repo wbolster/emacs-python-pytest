@@ -374,7 +374,8 @@ With a prefix ARG, allow editing."
           (user-error "Aborting; pytest still running")))
       (when process
         (delete-process process))
-      (erase-buffer)
+      (let ((inhibit-read-only t))
+        (erase-buffer))
       (unless (eq major-mode 'python-pytest-mode)
         (python-pytest-mode))
       (compilation-forget-errors)
