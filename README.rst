@@ -327,7 +327,7 @@ when enabled, will invoke ``pytest --zzz``:
    (transient-append-suffix
      'python-pytest-dispatch
      "-x"
-     ("-y" "The Y" "-y"))
+     '("-y" "The Y" "-y"))
    ;; group with `-z' after second from the last group,
    ;; that is before `Run tests'
    (transient-append-suffix
