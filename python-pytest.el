@@ -128,8 +128,8 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
     ("-s" "no output capture" "--capture=no")
     (python-pytest:-v)]]
   ["Selection, filtering, ordering"
-   [("-k" "only names matching expression" "-k=")
-    ("-m" "only marks matching expression" "-m=")
+   [(python-pytest:-k)
+    (python-pytest:-m)
     "                                          "] ;; visual alignment
    [("--dm" "run doctests" "--doctest-modules")
     ("--nf" "new first" "--new-first")
@@ -417,9 +417,7 @@ With a prefix ARG, allow editing."
   "Transform ARGS so that pytest understands them."
   (-->
    args
-   (python-pytest--switch-to-option it "--color" "--color=yes" "--color=no")
-   (python-pytest--quote-string-option it "-k")
-   (python-pytest--quote-string-option it "-m")))
+   (python-pytest--switch-to-option it "--color" "--color=yes" "--color=no")))
 
 (defun python-pytest--switch-to-option (args name on-replacement off-replacement)
   "Look in ARGS for switch NAME and turn it into option with a value.
@@ -440,6 +438,29 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
           (python-pytest--shell-quote it)
           (format "%s %s" option it)))
    args))
+
+(defun python-pytest--read-quoted-argument-for-short-flag (prompt initial-input history)
+  "Read a quoted string for use as a argument after a short-form command line flag."
+  (let* ((input (read-from-minibuffer prompt initial-input nil nil history))
+         (quoted-input (python-pytest--shell-quote input))
+         (formatted-input (format " %s" quoted-input)))
+    formatted-input))
+
+(transient-define-argument python-pytest:-k ()
+  :description "only names matching expression"
+  :class 'transient-option
+  :argument "-k"
+  :allow-empty nil
+  :key "-k"
+  :reader 'python-pytest--read-quoted-argument-for-short-flag)
+
+(transient-define-argument python-pytest:-m ()
+  :description "only marks matching expression"
+  :class 'transient-option
+  :argument "-m"
+  :allow-empty nil
+  :key "-m"
+  :reader 'python-pytest--read-quoted-argument-for-short-flag)
 
 (transient-define-argument python-pytest:-v ()
   :description "verbosity"
