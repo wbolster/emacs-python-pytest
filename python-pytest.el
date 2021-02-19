@@ -2,7 +2,7 @@
 
 ;; Author: wouter bolsterlee <wouter@bolsterl.ee>
 ;; Version: 3.0.0
-;; Package-Requires: ((emacs "24.4") (dash "2.12.0") (dash-functional "2.12.0") (transient "20200719") (projectile "0.14.0") (s "1.12.0"))
+;; Package-Requires: ((emacs "24.4") (dash "2.18.0") (transient "20200719") (projectile "0.14.0") (s "1.12.0"))
 ;; Keywords: pytest, test, python, languages, processes, tools
 ;; URL: https://github.com/wbolster/emacs-python-pytest
 ;;
@@ -24,7 +24,6 @@
 (require 'python)
 
 (require 'dash)
-(require 'dash-functional)
 (require 'transient)
 (require 'projectile)
 (require 's)
