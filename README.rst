@@ -170,7 +170,7 @@ working in a monorepo
 
 by default, ``pytest`` is run from the project root directory. if
 your package is not at the root of your repository, ``pytest`` might
-not found your modules.
+not find your modules.
 
 a workaround is to add the the package root to ``PYTHONPATH`` before
 running the tests. this can be found by adding a dummy file in the package
