@@ -164,6 +164,28 @@ __ https://direnv.net/
 __ https://github.com/wbolster/emacs-direnv
 __ https://github.com/purcell/exec-path-from-shell
 
+
+working in a monorepo
+---------------------
+
+by default, ``pytest`` is run from the project root directory. if
+your package is not at the root of your repository, ``pytest`` might
+not find your modules.
+
+a workaround is to add the the package root to ``PYTHONPATH`` before
+running the tests. this can be found by adding a dummy file in the package
+root. the following hook looks for a ``.pyroot`` file in parent directories.
+if found, it adds the directory of the file to ``PYTHONPATH``.
+
+.. code-block:: elisp
+
+  (add-hook 'python-mode-hook
+            (lambda ()
+              (when-let ((r (locate-dominating-file default-directory ".pyroot")))
+                (setq python-pytest-executable
+                      (concat "PYTHONPATH=" r " " "pytest")))))
+
+
 editing and repeating
 ---------------------
 
