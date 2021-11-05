@@ -49,6 +49,16 @@ When t, this toggles the behaviour of the prefix argument."
   :group 'python-pytest
   :type 'string)
 
+(defcustom python-pytest-shell "sh"
+  "The name of the shell to use to run the executable"
+  :group 'python-pytest
+  :type 'string)
+
+(defcustom python-pytest-shell-interactive nil
+  "Set to t to enable interactive mode on the given shell."
+  :group 'python-pytest
+  :type 'bool)
+
 (defcustom python-pytest-setup-hook nil
   "Hooks to run before a pytest process starts."
   :group 'python-pytest
@@ -386,7 +396,8 @@ With a prefix ARG, allow editing."
          'python-pdbtrack-comint-output-filter-function
          nil t))
       (run-hooks 'python-pytest-setup-hook)
-      (make-comint-in-buffer "pytest" buffer "sh" nil "-c" command)
+      (make-comint-in-buffer "pytest" buffer python-pytest-shell nil
+                             (if python-pytest-shell-interactive "-ic" "-c") command)
       (run-hooks 'python-pytest-started-hook)
       (setq process (get-buffer-process buffer))
       (set-process-sentinel process #'python-pytest--process-sentinel)
