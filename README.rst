@@ -397,6 +397,21 @@ __ https://melpa.org/
 __ https://stable.melpa.org/
 
 
+development branch
+------------------
+
+* make python-pytest-files show all files if no test files are found
+  (`#38 <https://github.com/wbolster/emacs-python-pytest/issues/38>`_)
+
+* display buffer window before starting comint to fix size detection
+  (`#48 <https://github.com/wbolster/emacs-python-pytest/issues/48>`_)
+
+* correctly handle -m and -k flags
+  (`#37 <https://github.com/wbolster/emacs-python-pytest/pull/37>`_)
+
+* fix clearing test output buffer
+  (`#15 <https://github.com/wbolster/emacs-python-pytest/pull/15>`_)
+
 3.0.0 (2020-08-10)
 ------------------
 
