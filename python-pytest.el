@@ -557,7 +557,8 @@ Example: ‘MyABCThingy.__repr__’ becomes ‘test_my_abc_thingy_repr’."
             (->> (projectile-project-files (python-pytest--project-root))
                  (-sort 'string<)
                  (projectile-sort-by-recentf-first)
-                 (projectile-test-files)))
+                 ;; show test files if any found, otherwise show everything
+                 (funcall (-orfn #'projectile-test-files #'identity))))
            (test-directories
             (->> test-files
                  (-map 'file-name-directory)
