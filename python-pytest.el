@@ -367,6 +367,7 @@ With a prefix ARG, allow editing."
   (let* ((buffer (python-pytest--get-buffer))
          (process (get-buffer-process buffer)))
     (with-current-buffer buffer
+      (display-buffer buffer)
       (when (comint-check-proc buffer)
         (unless (or compilation-always-kill
                     (yes-or-no-p "Kill running pytest process?"))
@@ -389,8 +390,7 @@ With a prefix ARG, allow editing."
       (make-comint-in-buffer "pytest" buffer "sh" nil "-c" command)
       (run-hooks 'python-pytest-started-hook)
       (setq process (get-buffer-process buffer))
-      (set-process-sentinel process #'python-pytest--process-sentinel)
-      (display-buffer buffer))))
+      (set-process-sentinel process #'python-pytest--process-sentinel))))
 
 (defun python-pytest--shell-quote (s)
   "Quote S for use in a shell command. Like `shell-quote-argument', but prettier."
