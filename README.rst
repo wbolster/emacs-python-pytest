@@ -400,6 +400,11 @@ __ https://stable.melpa.org/
 development branch
 ------------------
 
+* (new stuff goes here)
+
+3.1.0 (2021-11-09)
+------------------
+
 * make python-pytest-files show all files if no test files are found
   (`#38 <https://github.com/wbolster/emacs-python-pytest/issues/38>`_)
 
