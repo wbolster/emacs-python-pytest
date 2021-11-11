@@ -402,7 +402,7 @@ development branch
 
 * (new stuff goes here)
 
-3.2.0 (2021-11-09)
+3.2.0 (2021-11-11)
 ------------------
 
 * do not use melpa unstable versions in package-requires
