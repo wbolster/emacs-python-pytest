@@ -402,6 +402,12 @@ development branch
 
 * (new stuff goes here)
 
+3.2.0 (2021-11-09)
+------------------
+
+* do not use melpa unstable versions in package-requires
+  (`#52 <https://github.com/wbolster/emacs-python-pytest/issues/52>`_)
+
 3.1.0 (2021-11-09)
 ------------------
 
