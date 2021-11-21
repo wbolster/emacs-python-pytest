@@ -106,6 +106,11 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
                  (const :tag "Save current buffer" save-current)
                  (const :tag "Ignore" nil)))
 
+(defcustom python-pytest-dispatch-defaults '("--color")
+  "Default values for transient popup."
+  :group 'python-pytest
+  :type '(string))
+
 (defvar python-pytest--history nil
   "History for pytest invocations.")
 
@@ -120,7 +125,7 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
   "Show popup for running pytest."
   :man-page "pytest"
   :incompatible '(("--exitfirst" "--maxfail="))
-  :value '("--color")
+  :value python-pytest-dispatch-defaults
   ["Output"
    [("-c" "color" "--color")
     ("-q" "quiet" "--quiet")
