@@ -126,6 +126,8 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
     ("-q" "quiet" "--quiet")
     ("-s" "no output capture" "--capture=no")
     (python-pytest:-v)]]
+  ["Parallelization"
+   (python-pytest:-n)]
   ["Selection, filtering, ordering"
    [(python-pytest:-k)
     (python-pytest:-m)
@@ -475,6 +477,13 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
   :key "--tb"
   :argument "--tb="
   :choices '("long" "short" "line" "native" "no"))
+
+(transient-define-argument python-pytest:-n ()
+  :description "number of processes"
+  :class 'transient-option
+  :key "-n"
+  :argument "-n="
+  :choices '("auto" "1" "2" "3" "4" "5" "6" "7" "8"))
 
 
 ;; python helpers
