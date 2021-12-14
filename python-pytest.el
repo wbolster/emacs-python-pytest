@@ -143,6 +143,9 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
     ("--rx" "run xfail tests" "--runxfail")
     (python-pytest:--tb)
     ("--tr" "debug on each test" "--trace")]]
+  ["Options for pytest-xdist"
+   [(python-pytest:-n)]
+   [("-f" "loop on failure" "--looponfail")]]
   ["Run tests"
    [("t" "all" python-pytest)]
    [("r" "repeat" python-pytest-repeat)
@@ -475,6 +478,13 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
   :key "--tb"
   :argument "--tb="
   :choices '("long" "short" "line" "native" "no"))
+
+(transient-define-argument python-pytest:-n ()
+  :description "number of processes"
+  :class 'transient-option
+  :key "-n"
+  :argument "--numprocesses="
+  :choices '("auto" "1" "2" "4" "8" "16"))
 
 
 ;; python helpers
