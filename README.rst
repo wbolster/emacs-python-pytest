@@ -400,7 +400,8 @@ __ https://stable.melpa.org/
 development branch
 ------------------
 
-* (new stuff goes here)
+* add dispatch options for pytest-xdist
+  (`#54 <https://github.com/wbolster/emacs-python-pytest/pull/54>`_)
 
 3.2.0 (2021-11-11)
 ------------------
