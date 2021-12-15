@@ -116,7 +116,7 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
   "Current command; used in python-pytest-mode buffers.")
 
 ;;;###autoload (autoload 'python-pytest-dispatch "python-pytest" nil t)
-(define-transient-command python-pytest-dispatch ()
+(transient-define-prefix python-pytest-dispatch ()
   "Show popup for running pytest."
   :man-page "pytest"
   :incompatible '(("--exitfirst" "--maxfail="))
