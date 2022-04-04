@@ -534,7 +534,7 @@ Example: ‘MyABCThingy.__repr__’ becomes ‘test_my_abc_thingy_repr’."
 (defun python-pytest--project-root ()
   "Find the project root directory."
   (let ((projectile-require-project-root nil))
-    (projectile-project-root)))
+    (projectile-compilation-dir)))
 
 (defun python-pytest--relative-file-name (file)
   "Make FILE relative to the project root."
