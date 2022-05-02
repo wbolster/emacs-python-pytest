@@ -356,9 +356,9 @@ With a prefix ARG, allow editing."
       (setq edit (not edit)))
     (when edit
       (setq command
-            (read-from-minibuffer
+            (read-shell-command
              "Command: "
-             command nil nil 'python-pytest--history)))
+             command 'python-pytest--history)))
     (add-to-history 'python-pytest--history command)
     (setq python-pytest--history (-uniq python-pytest--history))
     (puthash (python-pytest--project-root) command
