@@ -484,7 +484,7 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
   :class 'transient-option
   :key "-n"
   :argument "--numprocesses="
-  :choices '("auto" "1" "2" "4" "8" "16"))
+  :choices '("auto" "0" "1" "2" "4" "8" "16"))
 
 
 ;; python helpers
