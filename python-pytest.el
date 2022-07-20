@@ -329,6 +329,13 @@ With a prefix ARG, allow editing."
   "Major mode for pytest sessions (derived from comint-mode)."
   (compilation-setup))
 
+(defvar python-pytest-finished-mode-map
+  (let ((map (make-sparse-keymap)))
+    (set-keymap-parent map compilation-minor-mode-map)
+    (define-key map [remap recompile] #'python-pytest-repeat)
+    map)
+  "Keymap for `python-pytest-mode' major mode.")
+
 (cl-defun python-pytest--run (&key args file func edit)
   "Run pytest for the given arguments."
   (setq args (python-pytest--transform-arguments args))
@@ -413,6 +420,9 @@ With a prefix ARG, allow editing."
 (defun python-pytest--process-sentinel (proc _state)
   "Process sentinel helper to run hooks after PROC finishes."
   (with-current-buffer (process-buffer proc)
+    (compilation-mode)
+    (read-only-mode -1)		  ;; required for python-pytest-repeat
+    (use-local-map python-pytest-finished-mode-map)
     (run-hooks 'python-pytest-finished-hook)))
 
 (defun python-pytest--transform-arguments (args)
