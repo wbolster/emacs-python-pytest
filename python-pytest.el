@@ -479,7 +479,7 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
   :class 'transient-switches
   :key "-v"
   :argument-format "%s"
-  :argument-regexp "\\(--verbose\\|--verbose --verbose\\)"
+  :argument-regexp "^\\(--verbose\\|--verbose --verbose\\)$"
   :choices '("--verbose" "--verbose --verbose"))
 
 (transient-define-argument python-pytest:--tb ()
