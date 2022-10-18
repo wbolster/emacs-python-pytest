@@ -396,7 +396,7 @@ while `melpa stable`__ only contains tagged (released) versions.
 __ https://melpa.org/
 __ https://stable.melpa.org/
 
-development branch
+3.3.0 (2022-10-18)
 ------------------
 
 * add dispatch options for pytest-xdist
