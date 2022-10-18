@@ -390,7 +390,7 @@ history
 =======
 
 note:
-`melpa`__ automatically ships the latest code from ``git master``,
+`melpa`__ automatically ships the latest code from the git ``main`` branch,
 while `melpa stable`__ only contains tagged (released) versions.
 
 __ https://melpa.org/
