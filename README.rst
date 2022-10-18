@@ -8,6 +8,7 @@ python-pytest.el
 .. image:: https://stable.melpa.org/packages/python-pytest-badge.svg
    :alt: melpa stable badge
 
+
 overview
 ========
 
@@ -163,7 +164,6 @@ to achieve the same inside emacs.
 __ https://direnv.net/
 __ https://github.com/wbolster/emacs-direnv
 __ https://github.com/purcell/exec-path-from-shell
-
 
 working in a monorepo
 ---------------------
@@ -358,7 +358,6 @@ when enabled, will invoke ``pytest --zzz``:
      ["My Z"
       ("-z" "The Z" "-z")]))
 
-
 `transient` lets you save defaults you want for it.
 just select all options on ``python-pytest-dispatch``
 and then
@@ -367,6 +366,7 @@ and then
   them persistent,
 - ``C-x s`` to save current settings as default for the
   current emacs session.
+
 
 contributing
 ============
@@ -395,7 +395,6 @@ while `melpa stable`__ only contains tagged (released) versions.
 
 __ https://melpa.org/
 __ https://stable.melpa.org/
-
 
 development branch
 ------------------
