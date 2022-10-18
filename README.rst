@@ -403,6 +403,21 @@ development branch
 * add dispatch options for pytest-xdist
   (`#54 <https://github.com/wbolster/emacs-python-pytest/pull/54>`_)
 
+* respect ``projectile-compilation-dir`` if it exists
+  (`#59 <https://github.com/wbolster/emacs-python-pytest/pull/59>`_)
+
+* Use ``read-shell-command`` instead of ``read-from-minibuffer``
+  (`#60 <https://github.com/wbolster/emacs-python-pytest/pull/60>`_)
+
+* add ``0`` as a valid argument that can be passed to ``-n``
+  (`#61 <https://github.com/wbolster/emacs-python-pytest/pull/61>`_)
+
+* switch to ``compilation-mode`` after pytest process finishes
+  (`#62 <https://github.com/wbolster/emacs-python-pytest/pull/62>`_)
+
+* fix saving of verbosity setting
+  (`#64 <https://github.com/wbolster/emacs-python-pytest/pull/64>`_)
+
 3.2.0 (2021-11-11)
 ------------------
 
