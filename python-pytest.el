@@ -132,7 +132,8 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
     "                                          "] ;; visual alignment
    [("--dm" "run doctests" "--doctest-modules")
     ("--nf" "new first" "--new-first")
-    ("--sw" "stepwise" "--stepwise")]]
+    ("--sw" "stepwise" "--stepwise")
+    ("--co" "collect only" "--collect-only")]]
   ["Failures, errors, debugging"
    [("-l" "show locals" "--showlocals")
     ("-p" "debug on error" "--pdb")
