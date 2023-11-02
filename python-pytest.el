@@ -125,7 +125,8 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
    [("-c" "color" "--color")
     ("-q" "quiet" "--quiet")
     ("-s" "no output capture" "--capture=no")
-    (python-pytest:-v)]]
+    (python-pytest:-v)
+    ("-W" "ignore warnings" "-W ignore")]]
   ["Selection, filtering, ordering"
    [(python-pytest:-k)
     (python-pytest:-m)
