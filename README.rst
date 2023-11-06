@@ -399,7 +399,14 @@ __ https://stable.melpa.org/
 development branch
 ------------------
 
-* …
+* add windows support
+  (`#68 <https://github.com/wbolster/emacs-python-pytest/pull/68>`_)
+
+* add ``-W`` argument to ignore warnings
+  (`#70 <https://github.com/wbolster/emacs-python-pytest/pull/70>`_)
+
+* add ``--collect-only`` option
+  (`#65 <https://github.com/wbolster/emacs-python-pytest/pull/65>`_)
 
 3.3.0 (2022-10-18)
 ------------------
