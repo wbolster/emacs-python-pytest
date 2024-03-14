@@ -125,8 +125,7 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
    [("-c" "color" "--color")
     ("-q" "quiet" "--quiet")
     ("-s" "no output capture" "--capture=no")
-    (python-pytest:-v)
-    ("-W" "ignore warnings" "-W ignore")]]
+    (python-pytest:-v)]]
   ["Selection, filtering, ordering"
    [(python-pytest:-k)
     (python-pytest:-m)
@@ -135,10 +134,11 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
     ("--nf" "new first" "--new-first")
     ("--sw" "stepwise" "--stepwise")
     ("--co" "collect only" "--collect-only")]]
-  ["Failures, errors, debugging"
+  ["Failures, errors, warnings, debugging"
    [("-l" "show locals" "--showlocals")
     ("-p" "debug on error" "--pdb")
-    ("-x" "exit after first failure" "--exitfirst")]
+    ("-x" "exit after first failure" "--exitfirst")
+    (python-pytest:-W)]
    [("--ff" "failed first" "--failed-first")
     ("--ft" "full tracebacks" "--full-trace")
     ("--mf" "exit after N failures or errors" "--maxfail=")
@@ -486,6 +486,13 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
   :argument-format "%s"
   :argument-regexp "^\\(--verbose\\|--verbose --verbose\\)$"
   :choices '("--verbose" "--verbose --verbose"))
+
+(transient-define-argument python-pytest:-W ()
+  :description "warnings"
+  :class 'transient-option
+  :key "-W"
+  :argument "-W "
+  :choices '("default" "error" "always" "module" "once" "ignore"))
 
 (transient-define-argument python-pytest:--tb ()
   :description "traceback style"
