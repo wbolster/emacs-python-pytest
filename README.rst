@@ -399,6 +399,11 @@ __ https://stable.melpa.org/
 development branch
 ------------------
 
+…
+
+3.4.0 (2024-03-14)
+------------------
+
 * add windows support
   (`#68 <https://github.com/wbolster/emacs-python-pytest/pull/68>`_)
 
