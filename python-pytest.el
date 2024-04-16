@@ -584,36 +584,21 @@ Example: ‘MyABCThingy.__repr__’ becomes ‘test_my_abc_thingy_repr’."
 
 (cl-defun python-pytest--select-test-files (&key type)
   "Interactively choose test files."
-  (cl-block nil
-    (let* ((test-files
-            (->> (projectile-project-files (python-pytest--project-root))
-                 (-sort 'string<)
-                 (projectile-sort-by-recentf-first)
-                 ;; show test files if any found, otherwise show everything
-                 (funcall (-orfn #'projectile-test-files #'identity))))
-           (test-directories
-            (->> test-files
-                 (-map 'file-name-directory)
-                 (-uniq)
-                 (-sort 'string<)))
-           (candidates (if (eq type 'file) test-files test-directories))
-           (done-message (propertize "[finish test file selection]" 'face 'success))
-           (choices)
-           (choice)
-           (selection-active t))
-      (unless candidates
-        (user-error "No test files found"))
-      (while (and selection-active candidates)
-        (setq choice (completing-read
-                      "Choose test files: "
-                      (if choices (cons done-message candidates) candidates)
-                      nil t))
-        (if (s-equals-p choice done-message)
-            (setq selection-active nil)
-          (setq
-           choices (cons choice choices)
-           candidates (-remove-item choice candidates))))
-      (cl-return (reverse choices)))))
+  (let* ((test-files
+          (->> (projectile-project-files (python-pytest--project-root))
+               (-sort 'string<)
+               (projectile-sort-by-recentf-first)
+               ;; show test files if any found, otherwise show everything
+               (funcall (-orfn #'projectile-test-files #'identity))))
+         (test-directories
+          (->> test-files
+               (-map 'file-name-directory)
+               (-uniq)
+               (-sort 'string<)))
+         (candidates (if (eq type 'file) test-files test-directories)))
+    (unless candidates
+      (user-error "No test files found"))
+    (completing-read-multiple "Choose test files: " candidates nil t)))
 
 (defun python-pytest--maybe-save-buffers ()
   "Maybe save modified buffers."
