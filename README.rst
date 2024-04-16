@@ -399,7 +399,8 @@ __ https://stable.melpa.org/
 development branch
 ------------------
 
-…
+- use ``completing-read-multiple`` for multiple files selection
+  (`#72 <https://github.com/wbolster/emacs-python-pytest/issues/72>`_)
 
 3.4.0 (2024-03-14)
 ------------------
