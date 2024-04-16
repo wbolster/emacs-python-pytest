@@ -595,10 +595,11 @@ Example: ‘MyABCThingy.__repr__’ becomes ‘test_my_abc_thingy_repr’."
                (-map 'file-name-directory)
                (-uniq)
                (-sort 'string<)))
-         (candidates (if (eq type 'file) test-files test-directories)))
+         (candidates (if (eq type 'file) test-files test-directories))
+         (prompt (if (eq type 'file) "Choose test files: " "Choose test directories: ")))
     (unless candidates
-      (user-error "No test files found"))
-    (completing-read-multiple "Choose test files: " candidates nil t)))
+      (user-error "No test files or directories found"))
+    (completing-read-multiple prompt candidates nil t)))
 
 (defun python-pytest--maybe-save-buffers ()
   "Maybe save modified buffers."
