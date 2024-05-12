@@ -2,7 +2,7 @@
 
 ;; Author: wouter bolsterlee <wouter@bolsterl.ee>
 ;; Version: 3.3.0
-;; Package-Requires: ((emacs "24.4") (dash "2.18.0") (transient "0.3.7") (projectile "0.14.0") (s "1.12.0"))
+;; Package-Requires: ((emacs "24.4") (dash "2.18.0") (transient "0.3.7") (s "1.12.0"))
 ;; Keywords: pytest, test, python, languages, processes, tools
 ;; URL: https://github.com/wbolster/emacs-python-pytest
 ;;
@@ -25,8 +25,10 @@
 
 (require 'dash)
 (require 'transient)
-(require 'projectile)
 (require 's)
+
+(require 'projectile nil t)
+(require 'project nil t)
 
 (defgroup python-pytest nil
   "pytest integration"
@@ -105,6 +107,25 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
                  (const :tag "Save all project buffers" save-all)
                  (const :tag "Save current buffer" save-current)
                  (const :tag "Ignore" nil)))
+
+(defcustom python-pytest-preferred-project-manager 'auto
+  "Override `projectile' or `project' auto-discovery to set preference if using both."
+  :group 'python-pytest
+  :type '(choice (const :tag "Projectile" projectile)
+                 (const :tag "Project" project)
+                 (const :tag "Automatically selected" auto))
+  :set (lambda (symbol value)
+         (cond
+          ((and (eq value 'projectile)
+                (not (featurep 'projectile)))
+           (user-error "Projectile preferred for python-pytest.el, but not available."))
+          ((and (eq value 'project)
+                (not (fboundp 'project-root)))
+           (user-error (concat "Project.el preferred for python-pytest.el, "
+                               "but need a newer version of Project (28.1+) to use.")))
+          (t
+           (set-default symbol value)
+           value))))
 
 (defvar python-pytest--history nil
   "History for pytest invocations.")
@@ -508,6 +529,11 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
   :argument "--numprocesses="
   :choices '("auto" "0" "1" "2" "4" "8" "16"))
 
+(defun python-pytest--using-projectile ()
+  "Returns t if projectile being used for project management."
+  (or (eq python-pytest-preferred-project-manager 'projectile)
+      (and (eq python-pytest-preferred-project-manager 'auto)
+           (bound-and-true-p projectile-mode))))
 
 ;; python helpers
 
@@ -551,12 +577,26 @@ Example: ‘MyABCThingy.__repr__’ becomes ‘test_my_abc_thingy_repr’."
 
 (defun python-pytest--project-name ()
   "Find the project name."
-  (projectile-project-name))
+  (if (python-pytest--using-projectile)
+      (projectile-project-name)
+    (if (fboundp 'project-name)
+        (project-name (project-current))
+      ;; older emacs...
+      (file-name-nondirectory
+       (directory-file-name (car (project-roots (project-current))))))))
 
 (defun python-pytest--project-root ()
-  "Find the project root directory."
-  (let ((projectile-require-project-root nil))
-    (projectile-compilation-dir)))
+  "Find the project root directory, for project.el can manually set your own
+`project-compilation-dir' variable to override `project-root' being used."
+  (if (python-pytest--using-projectile)
+      (let ((projectile-require-project-root nil))
+        (projectile-compilation-dir))
+    (or (and (bound-and-true-p project-compilation-dir)
+             project-compilation-dir)
+        (if (fboundp 'project-root)
+            (project-root (project-current))
+          ;; pre-emacs "28.1"
+          (car (project-roots (project-current)))))))
 
 (defun python-pytest--relative-file-name (file)
   "Make FILE relative to the project root."
@@ -567,11 +607,34 @@ Example: ‘MyABCThingy.__repr__’ becomes ‘test_my_abc_thingy_repr’."
 
 (defun python-pytest--test-file-p (file)
   "Tell whether FILE is a test file."
-  (projectile-test-file-p file))
+  (if (python-pytest--using-projectile)
+      (projectile-test-file-p file)
+    (let ((base-name (file-name-nondirectory file)))
+      (or (string-prefix-p "test_" base-name)
+          (string-suffix-p "_test.py" base-name)
+          (with-temp-buffer
+            (insert-file-contents file)
+            (goto-char (point-min))
+            (save-excursion
+              (re-search-forward "\\_<import +\\(unittest\\|pytest\\)\\_>" nil t)))))))
 
 (defun python-pytest--find-test-file (file)
   "Find a test file associated to FILE, if any."
-  (let ((test-file (projectile-find-matching-test file)))
+  (let ((test-file))
+    (if (python-pytest--using-projectile)
+        (setq test-file (projectile-find-matching-test file))
+      (let* ((base-name (file-name-sans-extension (file-name-nondirectory file)))
+             (test-file-regex (concat "\\`test_"
+                                      base-name "\\.py\\'\\|\\`"
+                                      base-name "_test\\.py\\'")))
+        (setq test-file
+              (car (cl-delete-if
+                    (lambda (full-file)
+                      (let ((file (file-name-nondirectory full-file)))
+                        (not (string-match-p
+                              test-file-regex
+                              file))))
+                    (project-files (project-current t)))))))
     (unless test-file
       (user-error "No test file found"))
     test-file))
@@ -585,11 +648,33 @@ Example: ‘MyABCThingy.__repr__’ becomes ‘test_my_abc_thingy_repr’."
 (cl-defun python-pytest--select-test-files (&key type)
   "Interactively choose test files."
   (let* ((test-files
-          (->> (projectile-project-files (python-pytest--project-root))
-               (-sort 'string<)
-               (projectile-sort-by-recentf-first)
-               ;; show test files if any found, otherwise show everything
-               (funcall (-orfn #'projectile-test-files #'identity))))
+          (if (python-pytest--using-projectile)
+              (->> (projectile-project-files (python-pytest--project-root))
+                   (-sort 'string<)
+                   (projectile-sort-by-recentf-first)
+                   ;; show test files if any found, otherwise show everything
+                   (funcall (-orfn #'projectile-test-files #'identity)))
+            (let* ((vc-directory-exclusion-list
+                    (append vc-directory-exclusion-list '("venv" ".venv")))
+                   (sorted-test-files
+                    (sort (cl-delete-if
+                           (lambda (file)
+                             (not (python-pytest--test-file-p file)))
+                           (project-files (project-current t)))
+                          #'string<))
+                   (recentf-test-files '())
+                   (test-files-prj
+                    (when (fboundp 'recentf)
+                      (dolist (file recentf-list
+                                    (progn
+                                      (setq sorted-test-files
+                                            (append (nreverse recentf-test-files)
+                                                    sorted-test-files))
+                                      (cl-delete-duplicates sorted-test-files
+                                                            :test 'equal )))
+                        (when (python-pytest--test-file-p file)
+                          (push (expand-file-name file) recentf-test-files))))))
+              test-files-prj)))
          (test-directories
           (->> test-files
                (-map 'file-name-directory)
@@ -615,7 +700,9 @@ Example: ‘MyABCThingy.__repr__’ becomes ‘test_my_abc_thingy_repr’."
     ;; check all project buffers
     (-when-let*
         ((buffers
-          (projectile-buffers-with-file (projectile-project-buffers)))
+          (if (python-pytest--using-projectile)
+              (projectile-buffers-with-file (projectile-project-buffers))
+            (project-buffers (project-current t))))
          (modified-buffers
           (-filter 'buffer-modified-p buffers))
          (confirmed
