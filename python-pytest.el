@@ -672,7 +672,8 @@ Example: ‘MyABCThingy.__repr__’ becomes ‘test_my_abc_thingy_repr’."
                                                     sorted-test-files))
                                       (cl-delete-duplicates sorted-test-files
                                                             :test 'equal )))
-                        (when (python-pytest--test-file-p file)
+                        (when (and (file-exists-p file)
+                                   (python-pytest--test-file-p file))
                           (push (expand-file-name file) recentf-test-files))))))
               test-files-prj)))
          (test-directories
@@ -702,7 +703,7 @@ Example: ‘MyABCThingy.__repr__’ becomes ‘test_my_abc_thingy_repr’."
         ((buffers
           (if (python-pytest--using-projectile)
               (projectile-buffers-with-file (projectile-project-buffers))
-            (project-buffers (project-current t))))
+            (-filter 'buffer-file-name (project-buffers (project-current t)))))
          (modified-buffers
           (-filter 'buffer-modified-p buffers))
          (confirmed
