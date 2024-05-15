@@ -611,12 +611,7 @@ Example: ‘MyABCThingy.__repr__’ becomes ‘test_my_abc_thingy_repr’."
       (projectile-test-file-p file)
     (let ((base-name (file-name-nondirectory file)))
       (or (string-prefix-p "test_" base-name)
-          (string-suffix-p "_test.py" base-name)
-          (with-temp-buffer
-            (insert-file-contents file)
-            (goto-char (point-min))
-            (save-excursion
-              (re-search-forward "\\_<import +\\(unittest\\|pytest\\)\\_>" nil t)))))))
+          (string-suffix-p "_test.py" base-name)))))
 
 (defun python-pytest--find-test-file (file)
   "Find a test file associated to FILE, if any."
