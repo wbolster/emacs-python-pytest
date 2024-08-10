@@ -146,7 +146,8 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
    [("-c" "color" "--color")
     ("-q" "quiet" "--quiet")
     ("-s" "no output capture" "--capture=no")
-    (python-pytest:-v)]]
+    (python-pytest:-v)
+    (python-pytest:--l)]]
   ["Selection, filtering, ordering"
    [(python-pytest:-k)
     (python-pytest:-m)
@@ -483,6 +484,13 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
          (quoted-input (python-pytest--shell-quote input))
          (formatted-input (format " %s" quoted-input)))
     formatted-input))
+
+(transient-define-argument python-pytest:--l ()
+  :description "set log cli level"
+  :class 'transient-option
+  :key "--l"
+  :argument "--log-cli-level="
+  :choices '("debug" "info" "warning" "error" "critical"))
 
 (transient-define-argument python-pytest:-k ()
   :description "only names matching expression"
