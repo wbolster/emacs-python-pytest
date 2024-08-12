@@ -284,6 +284,7 @@ With a prefix argument, allow editing."
 
 Additional ARGS are passed along to pytest.
 With a prefix argument, allow editing."
+  (declare (obsolete 'python-pytest-run-def-at-point "python-pytest 3.5.0"))
   (interactive
    (list
     (buffer-file-name)
