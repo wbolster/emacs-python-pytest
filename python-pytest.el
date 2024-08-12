@@ -597,6 +597,15 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
           (throw 'return t))))))
 
 (defun python-pytest--path-def-at-point ()
+  "Return the node id of the def at point.
+
++ If the test function is not inside a class, its node id is the name
+  of the function.
++ If the test function is defined inside a class, its node id would
+  look like: TestGroup::test_my_function.
++ If the test function is defined inside a class that is defined
+  inside another class, its node id would look like:
+  TestGroupParent::TestGroupChild::test_my_function."
   (unless (python-pytest--point-is-inside-def)
     (error "The point is not inside a def."))
   (let ((function
@@ -648,6 +657,14 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
     (string-join `(,@parents ,(cdr function)) "::")))
 
 (defun python-pytest--path-class-at-point ()
+  "Return the node id of the class at point.
+
++ If the class is not inside another class, its node id is the name
+  of the class.
++ If the class is defined inside another class, the node id of the
+  class which is contained would be: TestGroupParent::TestGroupChild,
+  while the node id of the class which contains the other class would
+  be TestGroupParent."
   (unless (python-pytest--point-is-inside-class)
     (error "The point is not inside a class."))
   (let ((class
