@@ -271,7 +271,7 @@ With a prefix argument, allow editing."
   (python-pytest--run
    :args args
    :file file
-   :func func
+   :node-id func
    :edit current-prefix-arg))
 
 ;;;###autoload
@@ -313,7 +313,7 @@ With a prefix argument, allow editing."
   (python-pytest--run
    :args args
    :file file
-   :func func
+   :node-id func
    :edit current-prefix-arg))
 
 ;;;###autoload
@@ -360,16 +360,22 @@ With a prefix ARG, allow editing."
     map)
   "Keymap for `python-pytest-mode' major mode.")
 
-(cl-defun python-pytest--run (&key args file func edit)
-  "Run pytest for the given arguments."
+(cl-defun python-pytest--run (&key args file node-id edit)
+  "Run pytest for the given arguments.
+
+NODE-ID should be the node id of the test to run. pytest uses
+double colon \"::\" for separating components in node ids. For
+example, the node-id for a function outside a class is the
+function name, the node-id for a function inside a class is
+TestClass::test_my_function, the node-id for a function inside a
+class that is inside another class is
+TestClassParent::TestClassChild::test_my_function."
   (setq args (python-pytest--transform-arguments args))
   (when (and file (file-name-absolute-p file))
     (setq file (python-pytest--relative-file-name file)))
-  (when func
-    (setq func (s-replace "." "::" func)))
   (let ((command)
         (thing (cond
-                ((and file func) (format "%s::%s" file func))
+                ((and file node-id) (format "%s::%s" file node-id))
                 (file file))))
     (when thing
       (setq args (-snoc args (python-pytest--shell-quote thing))))
@@ -565,7 +571,7 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
           (if (s-lowercase? (substring name 0 1))
               (car (s-split-up-to "\\." name 1))
             name)))
-    name))
+    (s-replace "." "::" name)))
 
 (defun python-pytest--make-test-name (func)
   "Turn function name FUNC into a name (hopefully) matching its test name.
