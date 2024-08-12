@@ -1,0 +1,134 @@
+(defmacro pytest-test-with-temp-text (text &rest body)
+  (declare (indent 1) (debug t))
+  `(let ((inside-text (if (stringp ,text) ,text (eval ,text))))
+     (with-temp-buffer
+       (setq python-indent-offset 2
+             python-indent-guess-indent-offset nil)
+       (python-mode)
+       (let ((point (string-match "<point>" inside-text)))
+	 (if point
+	     (progn
+	       (insert (replace-match "" nil nil inside-text))
+	       (goto-char (1+ (match-beginning 0))))
+	   (insert inside-text)
+	   (goto-char (point-min))))
+       (font-lock-ensure (point-min) (point-max))
+       ,@body)))
+
+(ert-deftest get-current-def-outside-class ()
+  (pytest-test-with-temp-text (concat
+                               "def foo():<point>\n"
+                               "  pass\n"
+                               "def bar():\n"
+                               "  pass\n")
+    (should (equal (python-pytest--path-def-at-point) "foo"))
+    (forward-line 1)
+    (should (equal (python-pytest--path-def-at-point) "foo"))
+    (forward-line 1)
+    (should (equal (python-pytest--path-def-at-point) "bar"))
+    (forward-line 1)
+    (should (equal (python-pytest--path-def-at-point) "bar"))))
+
+(ert-deftest get-current-def-inside-class ()
+  (pytest-test-with-temp-text (concat
+                               "class TestGroup:\n"
+                               "  def foo():<point>\n"
+                               "    pass\n"
+                               "  def bar():\n"
+                               "    pass\n")
+    (should (equal (python-pytest--path-def-at-point) "TestGroup::foo"))
+    (forward-line 1)
+    (should (equal (python-pytest--path-def-at-point) "TestGroup::foo"))
+    (forward-line 1)
+    (should (equal (python-pytest--path-def-at-point) "TestGroup::bar"))
+    (forward-line 1)
+    (should (equal (python-pytest--path-def-at-point) "TestGroup::bar"))))
+
+(ert-deftest get-current-def-inside-multiple-classes ()
+  (pytest-test-with-temp-text (string-join
+                               '("class TestDepthOne:"
+                                 "  class TestDepthTwo:"
+                                 "    class TestDepthThree:"
+                                 "      def foo():<point>"
+                                 "        pass"
+                                 "      def bar():"
+                                 "        pass")
+                               "\n")
+    (should (equal (python-pytest--path-def-at-point) "TestDepthOne::TestDepthTwo::TestDepthThree::foo"))
+    (forward-line 1)
+    (should (equal (python-pytest--path-def-at-point) "TestDepthOne::TestDepthTwo::TestDepthThree::foo"))
+    (forward-line 1)
+    (should (equal (python-pytest--path-def-at-point) "TestDepthOne::TestDepthTwo::TestDepthThree::bar"))
+    (forward-line 1)
+    (should (equal (python-pytest--path-def-at-point) "TestDepthOne::TestDepthTwo::TestDepthThree::bar"))
+    (forward-line 1))
+  (pytest-test-with-temp-text (string-join
+                               '("class TestDepthOne:"
+                                 "  def test_depth_one():<point>"
+                                 "    pass"
+                                 "  class TestDepthTwo:"
+                                 "    def test_depth_two():"
+                                 "      pass"
+                                 "    class TestDepthThree:"
+                                 "      def test_depth_three():"
+                                 "        pass")
+                               "\n")
+    (should (equal (python-pytest--path-def-at-point) "TestDepthOne::test_depth_one"))
+    (search-forward "test_depth_two")
+    (should (equal (python-pytest--path-def-at-point) "TestDepthOne::TestDepthTwo::test_depth_two"))
+    (search-forward "test_depth_three")
+    (should (equal (python-pytest--path-def-at-point) "TestDepthOne::TestDepthTwo::TestDepthThree::test_depth_three"))))
+
+(ert-deftest get-current-def-inside-def ()
+  (pytest-test-with-temp-text (string-join
+                               '("def foo():"
+                                 "  def bar():"
+                                 "    pass<point>")
+                               "\n")
+    (should (equal (python-pytest--path-def-at-point) "foo")))
+  (pytest-test-with-temp-text (string-join
+                               '("class TestDepthOne:"
+                                 "  class TestDepthTwo:"
+                                 "    class TestDepthThree:"
+                                 "      def foo():"
+                                 "        def bar():<point>"
+                                 "          pass")
+                               "\n")
+    ;; We want to get the outermost def because pytest can't
+    ;; identify defs inside defs. In other words, pytest can
+    ;; only identify those defs that are not contained within
+    ;; other defs.
+    (should (equal (python-pytest--path-def-at-point) "TestDepthOne::TestDepthTwo::TestDepthThree::foo"))))
+
+(ert-deftest get-current-class-outside-class ()
+  (pytest-test-with-temp-text (string-join
+                               '("class Test:"
+                                 "  def foo():"
+                                 "    pass<point>")
+                               "\n")
+    (should (equal (python-pytest--path-class-at-point) "Test"))))
+
+(ert-deftest get-current-class-inside-class ()
+  (pytest-test-with-temp-text (string-join
+                               '("class TestDepthOne:"
+                                 "  class TestDepthTwo:"
+                                 "    def foo():"
+                                 "      pass<point>")
+                               "\n")
+    (should (equal
+             (python-pytest--path-class-at-point)
+             "TestDepthOne::TestDepthTwo"))))
+
+(ert-deftest get-current-class-inside-multiple-classes ()
+  (pytest-test-with-temp-text (string-join
+                               '("class TestDepthOne:"
+                                 "  class TestDepthTwo:"
+                                 "    class TestDepthThree:"
+                                 "      class TestDepthFour:"
+                                 "        class TestDepthFive:"
+                                 "          def foo():"
+                                 "            pass<point>")
+                               "\n")
+    (should (equal
+             (python-pytest--path-class-at-point)
+             "TestDepthOne::TestDepthTwo::TestDepthThree::TestDepthFour::TestDepthFive"))))
