@@ -179,7 +179,8 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
    [("m" "files" python-pytest-files)
     ("M" "directories" python-pytest-directories)]
    [("d" "def/class (dwim)" python-pytest-function-dwim)
-    ("D" "def/class (this)" python-pytest-function)]])
+    ("D" "def at point" python-pytest-run-def-at-point)
+    ("c" "class at point" python-pytest-run-class-at-point)]])
 
 (define-obsolete-function-alias 'python-pytest-popup 'python-pytest-dispatch "2.0.0")
 
@@ -255,6 +256,26 @@ With a prefix argument, allow editing."
   (setq args (-concat args (-map 'python-pytest--shell-quote directories)))
   (python-pytest--run
    :args args
+   :edit current-prefix-arg))
+
+;;;###autoload
+(defun python-pytest-run-def-at-point ()
+  "Run def at point."
+  (interactive)
+  (python-pytest--run
+   :args (transient-args 'python-pytest-dispatch)
+   :file (buffer-file-name)
+   :node-id (python-pytest--path-def-at-point)
+   :edit current-prefix-arg))
+
+;;;###autoload
+(defun python-pytest-run-class-at-point ()
+  "Run class at point."
+  (interactive)
+  (python-pytest--run
+   :args (transient-args 'python-pytest-dispatch)
+   :file (buffer-file-name)
+   :node-id (python-pytest--path-class-at-point)
    :edit current-prefix-arg))
 
 ;;;###autoload
@@ -550,6 +571,111 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
            (bound-and-true-p projectile-mode))))
 
 ;; python helpers
+
+(defun python-pytest--point-is-inside-def ()
+  (unless (treesit-language-available-p 'python)
+    (error "This function requires tree-sitter support for python, but it is not available."))
+  (catch 'return
+    (let ((current-node (treesit-node-at (point) 'python)))
+      (while (setq current-node (treesit-node-parent current-node))
+        (when (equal (treesit-node-type current-node) "function_definition")
+          (throw 'return t))))))
+
+(defun python-pytest--point-is-inside-class ()
+  (unless (treesit-language-available-p 'python)
+    (error "This function requires tree-sitter support for python, but it is not available."))
+  (catch 'return
+    (let ((current-node (treesit-node-at (point) 'python)))
+      (while (setq current-node (treesit-node-parent current-node))
+        (when (equal (treesit-node-type current-node) "class_definition")
+          (throw 'return t))))))
+
+(defun python-pytest--path-def-at-point ()
+  (unless (python-pytest--point-is-inside-def)
+    (error "The point is not inside a def."))
+  (let ((function
+         ;; Move up to the outermost function
+         (catch 'return
+           (let ((current-node (treesit-node-at (point) 'python))
+                 function-node)
+             (catch 'break
+               (while (setq current-node (treesit-node-parent current-node))
+                 (when (equal (treesit-node-type current-node) "function_definition")
+                   (setq function-node current-node)
+                   ;; At this point, we know that we are on a
+                   ;; function. We need to move up to see if the
+                   ;; function is inside a function. If that's the
+                   ;; case, we move up. This way, we find the
+                   ;; outermost function. We need to do this because
+                   ;; pytest can't execute functions inside functions,
+                   ;; so we must get the function that is not inside
+                   ;; other function.
+                   (while (setq current-node (treesit-node-parent current-node))
+                     (when (equal (treesit-node-type current-node) "function_definition")
+                       (setq function-node current-node)))
+                   (throw 'break nil))))
+             (dolist (child (treesit-node-children function-node))
+               (when (equal (treesit-node-type child) "identifier")
+                 (throw 'return
+                        (cons
+                         ;; Keep a reference to the node that is a
+                         ;; function_definition. We need this
+                         ;; reference because we need to move up
+                         ;; through the class in which the function is
+                         ;; located to make up the entire path.
+                         function-node
+                         (buffer-substring-no-properties
+                          (treesit-node-start child)
+                          (treesit-node-end child)))))))))
+        parents)
+    ;; Move up through the parents to collect the chain of classes
+    ;; in which the function is contained.
+    (let ((current-node (car function)))
+      (while (setq current-node (treesit-node-parent current-node))
+        (when (equal (treesit-node-type current-node) "class_definition")
+          (dolist (child (treesit-node-children current-node))
+            (when (equal (treesit-node-type child) "identifier")
+              (push (buffer-substring-no-properties
+                     (treesit-node-start child)
+                     (treesit-node-end child))
+                    parents))))))
+    (string-join `(,@parents ,(cdr function)) "::")))
+
+(defun python-pytest--path-class-at-point ()
+  (unless (python-pytest--point-is-inside-class)
+    (error "The point is not inside a class."))
+  (let ((class
+         ;; Move up to the outermost function
+         (catch 'return
+           (let ((current-node (treesit-node-at (point) 'python)))
+             (catch 'break
+               (while (setq current-node (treesit-node-parent current-node))
+                 (when (equal (treesit-node-type current-node) "class_definition")
+                   (throw 'break nil))))
+             (dolist (child (treesit-node-children current-node))
+               (when (equal (treesit-node-type child) "identifier")
+                 (throw 'return
+                        (cons
+                         ;; Keep a reference to the node that is a
+                         ;; function_definition
+                         current-node
+                         (buffer-substring-no-properties
+                          (treesit-node-start child)
+                          (treesit-node-end child)))))))))
+        parents)
+    ;; Move up through the parents to collect the list of classes in
+    ;; which the class is contained. pytest supports running nested
+    ;; classes, but it doesn't support runing nested functions.
+    (let ((current-node (car class)))
+      (while (setq current-node (treesit-node-parent current-node))
+        (when (equal (treesit-node-type current-node) "class_definition")
+          (dolist (child (treesit-node-children current-node))
+            (when (equal (treesit-node-type child) "identifier")
+              (push (buffer-substring-no-properties
+                     (treesit-node-start child)
+                     (treesit-node-end child))
+                    parents))))))
+    (string-join `(,@parents ,(cdr class)) "::")))
 
 (defun python-pytest--current-defun ()
   "Detect the current function/class (if any)."
