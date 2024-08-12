@@ -287,7 +287,7 @@ With a prefix argument, allow editing."
   (interactive
    (list
     (buffer-file-name)
-    (python-pytest--current-defun)
+    (python-pytest--path-def-at-point)
     (transient-args 'python-pytest-dispatch)))
   (python-pytest--run
    :args args
@@ -307,7 +307,7 @@ With a prefix argument, allow editing."
   (interactive
    (list
     (buffer-file-name)
-    (python-pytest--current-defun)
+    (python-pytest--path-def-at-point)
     (transient-args 'python-pytest-dispatch)))
   (unless (python-pytest--test-file-p file)
     (setq
@@ -679,6 +679,7 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
 
 (defun python-pytest--current-defun ()
   "Detect the current function/class (if any)."
+  (declare (obsolete 'python-pytest--path-def-at-point "python-pytest 3.5.0"))
   (let* ((name
           (or (python-info-current-defun)
               (save-excursion
