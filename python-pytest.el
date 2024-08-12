@@ -265,7 +265,7 @@ With a prefix argument, allow editing."
   (python-pytest--run
    :args (transient-args 'python-pytest-dispatch)
    :file (buffer-file-name)
-   :node-id (python-pytest--path-def-at-point)
+   :node-id (python-pytest--node-id-def-at-point)
    :edit current-prefix-arg))
 
 ;;;###autoload
@@ -275,7 +275,7 @@ With a prefix argument, allow editing."
   (python-pytest--run
    :args (transient-args 'python-pytest-dispatch)
    :file (buffer-file-name)
-   :node-id (python-pytest--path-class-at-point)
+   :node-id (python-pytest--node-id-class-at-point)
    :edit current-prefix-arg))
 
 ;;;###autoload
@@ -288,7 +288,7 @@ With a prefix argument, allow editing."
   (interactive
    (list
     (buffer-file-name)
-    (python-pytest--path-def-at-point)
+    (python-pytest--node-id-def-at-point)
     (transient-args 'python-pytest-dispatch)))
   (python-pytest--run
    :args args
@@ -313,7 +313,7 @@ With a prefix argument, allow editing."
   (interactive
    (list
     (buffer-file-name)
-    (python-pytest--path-def-at-point)
+    (python-pytest--node-id-def-at-point)
     (transient-args 'python-pytest-dispatch)))
   (unless (python-pytest--test-file-p file)
     (setq
@@ -596,7 +596,7 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
         (when (equal (treesit-node-type current-node) "class_definition")
           (throw 'return t))))))
 
-(defun python-pytest--path-def-at-point ()
+(defun python-pytest--node-id-def-at-point ()
   "Return the node id of the def at point.
 
 + If the test function is not inside a class, its node id is the name
@@ -635,16 +635,20 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
                         (cons
                          ;; Keep a reference to the node that is a
                          ;; function_definition. We need this
-                         ;; reference because we need to move up
-                         ;; through the class in which the function is
-                         ;; located to make up the entire path.
+                         ;; reference because afterwards we need to
+                         ;; move up starting at the current node to
+                         ;; find the node id of the class (if there's
+                         ;; any) in which the function is defined.
                          function-node
                          (buffer-substring-no-properties
                           (treesit-node-start child)
                           (treesit-node-end child)))))))))
         parents)
-    ;; Move up through the parents to collect the chain of classes
-    ;; in which the function is contained.
+    ;; Move up through the parent nodes to see if the function is
+    ;; defined inside a class and collect the classes to finally build
+    ;; the node id of the current function. Remember that the node id
+    ;; of a function that is defined within nested classes must have
+    ;; the name of the nested classes.
     (let ((current-node (car function)))
       (while (setq current-node (treesit-node-parent current-node))
         (when (equal (treesit-node-type current-node) "class_definition")
@@ -656,7 +660,7 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
                     parents))))))
     (string-join `(,@parents ,(cdr function)) "::")))
 
-(defun python-pytest--path-class-at-point ()
+(defun python-pytest--node-id-class-at-point ()
   "Return the node id of the class at point.
 
 + If the class is not inside another class, its node id is the name
@@ -702,7 +706,7 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
 
 (defun python-pytest--current-defun ()
   "Detect the current function/class (if any)."
-  (declare (obsolete 'python-pytest--path-def-at-point "python-pytest 3.5.0"))
+  (declare (obsolete 'python-pytest--node-id-def-at-point "python-pytest 3.5.0"))
   (let* ((name
           (or (python-info-current-defun)
               (save-excursion

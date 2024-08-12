@@ -21,13 +21,13 @@
                                "  pass\n"
                                "def bar():\n"
                                "  pass\n")
-    (should (equal (python-pytest--path-def-at-point) "foo"))
+    (should (equal (python-pytest--node-id-def-at-point) "foo"))
     (forward-line 1)
-    (should (equal (python-pytest--path-def-at-point) "foo"))
+    (should (equal (python-pytest--node-id-def-at-point) "foo"))
     (forward-line 1)
-    (should (equal (python-pytest--path-def-at-point) "bar"))
+    (should (equal (python-pytest--node-id-def-at-point) "bar"))
     (forward-line 1)
-    (should (equal (python-pytest--path-def-at-point) "bar"))))
+    (should (equal (python-pytest--node-id-def-at-point) "bar"))))
 
 (ert-deftest get-current-def-inside-class ()
   (pytest-test-with-temp-text (concat
@@ -36,13 +36,13 @@
                                "    pass\n"
                                "  def bar():\n"
                                "    pass\n")
-    (should (equal (python-pytest--path-def-at-point) "TestGroup::foo"))
+    (should (equal (python-pytest--node-id-def-at-point) "TestGroup::foo"))
     (forward-line 1)
-    (should (equal (python-pytest--path-def-at-point) "TestGroup::foo"))
+    (should (equal (python-pytest--node-id-def-at-point) "TestGroup::foo"))
     (forward-line 1)
-    (should (equal (python-pytest--path-def-at-point) "TestGroup::bar"))
+    (should (equal (python-pytest--node-id-def-at-point) "TestGroup::bar"))
     (forward-line 1)
-    (should (equal (python-pytest--path-def-at-point) "TestGroup::bar"))))
+    (should (equal (python-pytest--node-id-def-at-point) "TestGroup::bar"))))
 
 (ert-deftest get-current-def-inside-multiple-classes ()
   (pytest-test-with-temp-text (string-join
@@ -54,13 +54,13 @@
                                  "      def bar():"
                                  "        pass")
                                "\n")
-    (should (equal (python-pytest--path-def-at-point) "TestDepthOne::TestDepthTwo::TestDepthThree::foo"))
+    (should (equal (python-pytest--node-id-def-at-point) "TestDepthOne::TestDepthTwo::TestDepthThree::foo"))
     (forward-line 1)
-    (should (equal (python-pytest--path-def-at-point) "TestDepthOne::TestDepthTwo::TestDepthThree::foo"))
+    (should (equal (python-pytest--node-id-def-at-point) "TestDepthOne::TestDepthTwo::TestDepthThree::foo"))
     (forward-line 1)
-    (should (equal (python-pytest--path-def-at-point) "TestDepthOne::TestDepthTwo::TestDepthThree::bar"))
+    (should (equal (python-pytest--node-id-def-at-point) "TestDepthOne::TestDepthTwo::TestDepthThree::bar"))
     (forward-line 1)
-    (should (equal (python-pytest--path-def-at-point) "TestDepthOne::TestDepthTwo::TestDepthThree::bar"))
+    (should (equal (python-pytest--node-id-def-at-point) "TestDepthOne::TestDepthTwo::TestDepthThree::bar"))
     (forward-line 1))
   (pytest-test-with-temp-text (string-join
                                '("class TestDepthOne:"
@@ -73,11 +73,11 @@
                                  "      def test_depth_three():"
                                  "        pass")
                                "\n")
-    (should (equal (python-pytest--path-def-at-point) "TestDepthOne::test_depth_one"))
+    (should (equal (python-pytest--node-id-def-at-point) "TestDepthOne::test_depth_one"))
     (search-forward "test_depth_two")
-    (should (equal (python-pytest--path-def-at-point) "TestDepthOne::TestDepthTwo::test_depth_two"))
+    (should (equal (python-pytest--node-id-def-at-point) "TestDepthOne::TestDepthTwo::test_depth_two"))
     (search-forward "test_depth_three")
-    (should (equal (python-pytest--path-def-at-point) "TestDepthOne::TestDepthTwo::TestDepthThree::test_depth_three"))))
+    (should (equal (python-pytest--node-id-def-at-point) "TestDepthOne::TestDepthTwo::TestDepthThree::test_depth_three"))))
 
 (ert-deftest get-current-def-inside-def ()
   (pytest-test-with-temp-text (string-join
@@ -85,7 +85,7 @@
                                  "  def bar():"
                                  "    pass<point>")
                                "\n")
-    (should (equal (python-pytest--path-def-at-point) "foo")))
+    (should (equal (python-pytest--node-id-def-at-point) "foo")))
   (pytest-test-with-temp-text (string-join
                                '("class TestDepthOne:"
                                  "  class TestDepthTwo:"
@@ -98,7 +98,7 @@
     ;; identify defs inside defs. In other words, pytest can
     ;; only identify those defs that are not contained within
     ;; other defs.
-    (should (equal (python-pytest--path-def-at-point) "TestDepthOne::TestDepthTwo::TestDepthThree::foo"))))
+    (should (equal (python-pytest--node-id-def-at-point) "TestDepthOne::TestDepthTwo::TestDepthThree::foo"))))
 
 (ert-deftest get-current-class-outside-class ()
   (pytest-test-with-temp-text (string-join
@@ -106,7 +106,7 @@
                                  "  def foo():"
                                  "    pass<point>")
                                "\n")
-    (should (equal (python-pytest--path-class-at-point) "Test"))))
+    (should (equal (python-pytest--node-id-class-at-point) "Test"))))
 
 (ert-deftest get-current-class-inside-class ()
   (pytest-test-with-temp-text (string-join
@@ -116,7 +116,7 @@
                                  "      pass<point>")
                                "\n")
     (should (equal
-             (python-pytest--path-class-at-point)
+             (python-pytest--node-id-class-at-point)
              "TestDepthOne::TestDepthTwo"))))
 
 (ert-deftest get-current-class-inside-multiple-classes ()
@@ -130,5 +130,5 @@
                                  "            pass<point>")
                                "\n")
     (should (equal
-             (python-pytest--path-class-at-point)
+             (python-pytest--node-id-class-at-point)
              "TestDepthOne::TestDepthTwo::TestDepthThree::TestDepthFour::TestDepthFive"))))
