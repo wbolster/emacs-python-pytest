@@ -287,7 +287,7 @@ With a prefix argument, allow editing."
   (interactive
    (list
     (buffer-file-name)
-    (python-pytest--current-defun)
+    (python-pytest--node-id-def-or-class-at-point)
     (transient-args 'python-pytest-dispatch)))
   (python-pytest--run
    :args args
@@ -312,7 +312,7 @@ With a prefix argument, allow editing."
   (interactive
    (list
     (buffer-file-name)
-    (python-pytest--current-defun)
+    (python-pytest--node-id-def-or-class-at-point)
     (transient-args 'python-pytest-dispatch)))
   (unless (python-pytest--test-file-p file)
     (setq
@@ -703,7 +703,7 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
                     parents))))))
     (string-join `(,@parents ,(cdr class)) "::")))
 
-(defun python-pytest--current-defun ()
+(defun python-pytest--node-id-def-or-class-at-point ()
   "Detect the current function/class (if any)."
   (let* ((name
           (or (python-info-current-defun)
