@@ -127,6 +127,16 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
            (set-default symbol value)
            value))))
 
+(defcustom python-pytest-use-treesit nil
+  "Whether to use treesit for getting the node ids of things at point.
+
+Users that are running a version of Emacs that supports treesit
+and have the Python language grammar for treesit should set this
+variable to t. Users that are running a version of Emacs that
+don't support treesit should set this variable to nil."
+  :group 'python-pytest
+  :type 'boolean)
+
 (defvar python-pytest--history nil
   "History for pytest invocations.")
 
@@ -178,9 +188,10 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
     ("F" "file (this)" python-pytest-file)]
    [("m" "files" python-pytest-files)
     ("M" "directories" python-pytest-directories)]
-   [("d" "def at point (dwim)" python-pytest-run-def-or-class-at-point-dwim)
-    ("D" "def at point" python-pytest-run-def-at-point-treesit)
-    ("c" "class at point" python-pytest-run-class-at-point-treesit)]])
+   [("d" "def at point (dwim)" python-pytest-run-def-or-class-at-point-dwim :if-not python-pytest-use-treesit-p)
+    ("D" "def at point" python-pytest-run-def-or-class-at-point :if-not python-pytest-use-treesit-p)
+    ("d" "def at point" python-pytest-run-def-at-point-treesit :if python-pytest-use-treesit-p)
+    ("c" "class at point" python-pytest-run-class-at-point-treesit :if python-pytest-use-treesit-p)]])
 
 (define-obsolete-function-alias 'python-pytest-popup 'python-pytest-dispatch "2.0.0")
 
@@ -460,6 +471,17 @@ TestClassParent::TestClassChild::test_my_function."
       (run-hooks 'python-pytest-started-hook)
       (setq process (get-buffer-process buffer))
       (set-process-sentinel process #'python-pytest--process-sentinel))))
+
+(defun python-pytest-use-treesit-p ()
+  "Return t if python-pytest-use-treesit is t. Otherwise, return nil.
+
+This function is passed to the parameter :if in
+`python-pytest-dispatch'.
+
+Although this function might look useless, the main reason why it
+was defined was that the parameter that is provided to the
+transient keyword :if must be a function."
+  python-pytest-use-treesit)
 
 (defun python-pytest--shell-quote (s)
   "Quote S for use in a shell command. Like `shell-quote-argument', but prettier."
