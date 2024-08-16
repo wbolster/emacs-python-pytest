@@ -178,7 +178,7 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
     ("F" "file (this)" python-pytest-file)]
    [("m" "files" python-pytest-files)
     ("M" "directories" python-pytest-directories)]
-   [("d" "def at point (dwim)" python-pytest-run-def-at-point-dwim)
+   [("d" "def at point (dwim)" python-pytest-run-def-or-class-at-point-dwim)
     ("D" "def at point" python-pytest-run-def-at-point-treesit)
     ("c" "class at point" python-pytest-run-class-at-point-treesit)]])
 
@@ -279,7 +279,7 @@ With a prefix argument, allow editing."
    :edit current-prefix-arg))
 
 ;;;###autoload
-(defun python-pytest-function (file func args)
+(defun python-pytest-run-def-or-class-at-point (file func args)
   "Run pytest on FILE with FUNC (or class).
 
 Additional ARGS are passed along to pytest.
@@ -296,7 +296,7 @@ With a prefix argument, allow editing."
    :edit current-prefix-arg))
 
 ;;;###autoload
-(defun python-pytest-run-def-at-point-dwim (file func args)
+(defun python-pytest-run-def-or-class-at-point-dwim (file func args)
   "Run pytest on FILE using FUNC at point as the node-id.
 
 If `python-pytest--test-file-p' returns t for FILE (i.e. the file
