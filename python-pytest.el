@@ -179,8 +179,8 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
    [("m" "files" python-pytest-files)
     ("M" "directories" python-pytest-directories)]
    [("d" "def at point (dwim)" python-pytest-run-def-at-point-dwim)
-    ("D" "def at point" python-pytest-run-def-at-point)
-    ("c" "class at point" python-pytest-run-class-at-point)]])
+    ("D" "def at point" python-pytest-run-def-at-point-treesit)
+    ("c" "class at point" python-pytest-run-class-at-point-treesit)]])
 
 (define-obsolete-function-alias 'python-pytest-popup 'python-pytest-dispatch "2.0.0")
 
@@ -259,23 +259,23 @@ With a prefix argument, allow editing."
    :edit current-prefix-arg))
 
 ;;;###autoload
-(defun python-pytest-run-def-at-point ()
+(defun python-pytest-run-def-at-point-treesit ()
   "Run def at point."
   (interactive)
   (python-pytest--run
    :args (transient-args 'python-pytest-dispatch)
    :file (buffer-file-name)
-   :node-id (python-pytest--node-id-def-at-point)
+   :node-id (python-pytest--node-id-def-at-point-treesit)
    :edit current-prefix-arg))
 
 ;;;###autoload
-(defun python-pytest-run-class-at-point ()
+(defun python-pytest-run-class-at-point-treesit ()
   "Run class at point."
   (interactive)
   (python-pytest--run
    :args (transient-args 'python-pytest-dispatch)
    :file (buffer-file-name)
-   :node-id (python-pytest--node-id-class-at-point)
+   :node-id (python-pytest--node-id-class-at-point-treesit)
    :edit current-prefix-arg))
 
 ;;;###autoload
@@ -596,7 +596,7 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
         (when (equal (treesit-node-type current-node) "class_definition")
           (throw 'return t))))))
 
-(defun python-pytest--node-id-def-at-point ()
+(defun python-pytest--node-id-def-at-point-treesit ()
   "Return the node id of the def at point.
 
 + If the test function is not inside a class, its node id is the name
@@ -660,7 +660,7 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
                     parents))))))
     (string-join `(,@parents ,(cdr function)) "::")))
 
-(defun python-pytest--node-id-class-at-point ()
+(defun python-pytest--node-id-class-at-point-treesit ()
   "Return the node id of the class at point.
 
 + If the class is not inside another class, its node id is the name
