@@ -127,7 +127,7 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
            (set-default symbol value)
            value))))
 
-(defcustom python-pytest-use-treesit nil
+(defcustom python-pytest-use-treesit (featurep 'treesit)
   "Whether to use treesit for getting the node ids of things at point.
 
 Users that are running a version of Emacs that supports treesit
