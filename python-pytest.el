@@ -600,7 +600,7 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
 
 ;; python helpers
 
-(defun python-pytest--point-is-inside-def ()
+(defun python-pytest--point-is-inside-def-treesit ()
   (unless (treesit-language-available-p 'python)
     (error "This function requires tree-sitter support for python, but it is not available."))
   (catch 'return
@@ -609,7 +609,7 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
         (when (equal (treesit-node-type current-node) "function_definition")
           (throw 'return t))))))
 
-(defun python-pytest--point-is-inside-class ()
+(defun python-pytest--point-is-inside-class-treesit ()
   (unless (treesit-language-available-p 'python)
     (error "This function requires tree-sitter support for python, but it is not available."))
   (catch 'return
@@ -628,7 +628,7 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
 + If the test function is defined inside a class that is defined
   inside another class, its node id would look like:
   TestGroupParent::TestGroupChild::test_my_function."
-  (unless (python-pytest--point-is-inside-def)
+  (unless (python-pytest--point-is-inside-def-treesit)
     (error "The point is not inside a def."))
   (let ((function
          ;; Move up to the outermost function
@@ -691,7 +691,7 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
   class which is contained would be: TestGroupParent::TestGroupChild,
   while the node id of the class which contains the other class would
   be TestGroupParent."
-  (unless (python-pytest--point-is-inside-class)
+  (unless (python-pytest--point-is-inside-class-treesit)
     (error "The point is not inside a class."))
   (let ((class
          ;; Move up to the outermost function
