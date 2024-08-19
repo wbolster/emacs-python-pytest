@@ -29,6 +29,7 @@
 
 (require 'projectile nil t)
 (require 'project nil t)
+(require 'treesit nil t)
 
 (defgroup python-pytest nil
   "pytest integration"
