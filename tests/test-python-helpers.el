@@ -27,7 +27,25 @@
     (forward-line 1)
     (should (equal (python-pytest--node-id-def-at-point-treesit) "bar"))
     (forward-line 1)
-    (should (equal (python-pytest--node-id-def-at-point-treesit) "bar"))))
+    (should (equal (python-pytest--node-id-def-at-point-treesit) "bar"))
+    ;; when the buffer is narrowed, we should get the same result.
+    (goto-char (point-min))
+    (search-forward "foo")
+    (save-restriction
+      (narrow-to-defun)
+      (should (equal (python-pytest--node-id-def-at-point-treesit) "foo")))
+    (forward-line 1)
+    (save-restriction
+      (narrow-to-defun)
+      (should (equal (python-pytest--node-id-def-at-point-treesit) "foo")))
+    (forward-line 1)
+    (save-restriction
+      (narrow-to-defun)
+      (should (equal (python-pytest--node-id-def-at-point-treesit) "bar")))
+    (forward-line 1)
+    (save-restriction
+      (narrow-to-defun)
+      (should (equal (python-pytest--node-id-def-at-point-treesit) "bar")))))
 
 (ert-deftest get-current-def-inside-class ()
   (pytest-test-with-temp-text (concat
@@ -42,7 +60,25 @@
     (forward-line 1)
     (should (equal (python-pytest--node-id-def-at-point-treesit) "TestGroup::bar"))
     (forward-line 1)
-    (should (equal (python-pytest--node-id-def-at-point-treesit) "TestGroup::bar"))))
+    (should (equal (python-pytest--node-id-def-at-point-treesit) "TestGroup::bar"))
+    ;; when the buffer is narrowed, we should get the same result
+    (goto-char (point-min))
+    (search-forward "foo")
+    (save-restriction
+      (narrow-to-defun)
+      (should (equal (python-pytest--node-id-def-at-point-treesit) "TestGroup::foo")))
+    (forward-line 1)
+    (save-restriction
+      (narrow-to-defun)
+      (should (equal (python-pytest--node-id-def-at-point-treesit) "TestGroup::foo")))
+    (forward-line 1)
+    (save-restriction
+      (narrow-to-defun)
+      (should (equal (python-pytest--node-id-def-at-point-treesit) "TestGroup::bar")))
+    (forward-line 1)
+    (save-restriction
+      (narrow-to-defun)
+      (should (equal (python-pytest--node-id-def-at-point-treesit) "TestGroup::bar")))))
 
 (ert-deftest get-current-def-inside-multiple-classes ()
   (pytest-test-with-temp-text (string-join
@@ -61,7 +97,25 @@
     (should (equal (python-pytest--node-id-def-at-point-treesit) "TestDepthOne::TestDepthTwo::TestDepthThree::bar"))
     (forward-line 1)
     (should (equal (python-pytest--node-id-def-at-point-treesit) "TestDepthOne::TestDepthTwo::TestDepthThree::bar"))
-    (forward-line 1))
+    (forward-line 1)
+    ;; when the buffer is narrowed, we should get the same result.
+    (goto-char (point-min))
+    (save-restriction
+      (search-forward "foo")
+      (narrow-to-defun)
+      (should (equal (python-pytest--node-id-def-at-point-treesit) "TestDepthOne::TestDepthTwo::TestDepthThree::foo")))
+    (save-restriction
+      (forward-line 1)
+      (narrow-to-defun)
+      (should (equal (python-pytest--node-id-def-at-point-treesit) "TestDepthOne::TestDepthTwo::TestDepthThree::foo")))
+    (save-restriction
+      (forward-line 1)
+      (narrow-to-defun)
+      (should (equal (python-pytest--node-id-def-at-point-treesit) "TestDepthOne::TestDepthTwo::TestDepthThree::bar")))
+    (save-restriction
+      (forward-line 1)
+      (narrow-to-defun)
+      (should (equal (python-pytest--node-id-def-at-point-treesit) "TestDepthOne::TestDepthTwo::TestDepthThree::bar"))))
   (pytest-test-with-temp-text (string-join
                                '("class TestDepthOne:"
                                  "  def test_depth_one():<point>"
@@ -77,7 +131,21 @@
     (search-forward "test_depth_two")
     (should (equal (python-pytest--node-id-def-at-point-treesit) "TestDepthOne::TestDepthTwo::test_depth_two"))
     (search-forward "test_depth_three")
-    (should (equal (python-pytest--node-id-def-at-point-treesit) "TestDepthOne::TestDepthTwo::TestDepthThree::test_depth_three"))))
+    (should (equal (python-pytest--node-id-def-at-point-treesit) "TestDepthOne::TestDepthTwo::TestDepthThree::test_depth_three"))
+    ;; when the buffer is narrowed, we should get the same result.
+    (goto-char (point-min))
+    (save-restriction
+      (search-forward "test_depth_one")
+      (narrow-to-defun)
+      (should (equal (python-pytest--node-id-def-at-point-treesit) "TestDepthOne::test_depth_one")))
+    (save-restriction
+      (search-forward "test_depth_two")
+      (narrow-to-defun)
+      (should (equal (python-pytest--node-id-def-at-point-treesit) "TestDepthOne::TestDepthTwo::test_depth_two")))
+    (save-restriction
+      (search-forward "test_depth_three")
+      (narrow-to-defun)
+      (should (equal (python-pytest--node-id-def-at-point-treesit) "TestDepthOne::TestDepthTwo::TestDepthThree::test_depth_three")))))
 
 (ert-deftest get-current-def-inside-def ()
   (pytest-test-with-temp-text (string-join
@@ -85,6 +153,8 @@
                                  "  def bar():"
                                  "    pass<point>")
                                "\n")
+    (should (equal (python-pytest--node-id-def-at-point-treesit) "foo"))
+    (narrow-to-defun)
     (should (equal (python-pytest--node-id-def-at-point-treesit) "foo")))
   (pytest-test-with-temp-text (string-join
                                '("class TestDepthOne:"
@@ -98,6 +168,9 @@
     ;; identify defs inside defs. In other words, pytest can
     ;; only identify those defs that are not contained within
     ;; other defs.
+    (should (equal (python-pytest--node-id-def-at-point-treesit) "TestDepthOne::TestDepthTwo::TestDepthThree::foo"))
+    ;; when the buffer is narrowed, we should get the same result.
+    (narrow-to-defun)
     (should (equal (python-pytest--node-id-def-at-point-treesit) "TestDepthOne::TestDepthTwo::TestDepthThree::foo"))))
 
 (ert-deftest get-current-class-outside-class ()
@@ -106,15 +179,24 @@
                                  "  def foo():"
                                  "    pass<point>")
                                "\n")
+    (should (equal (python-pytest--node-id-class-at-point-treesit) "Test"))
+    ;; when the buffer is narrowed, we should get the same result.
+    (narrow-to-defun)
     (should (equal (python-pytest--node-id-class-at-point-treesit) "Test"))))
 
 (ert-deftest get-current-class-inside-class ()
+  ;; when the buffer is not narrowed
   (pytest-test-with-temp-text (string-join
                                '("class TestDepthOne:"
                                  "  class TestDepthTwo:"
                                  "    def foo():"
                                  "      pass<point>")
                                "\n")
+    (should (equal
+             (python-pytest--node-id-class-at-point-treesit)
+             "TestDepthOne::TestDepthTwo"))
+    ;; when the buffer is narrowed, we should get the same result.
+    (narrow-to-defun)
     (should (equal
              (python-pytest--node-id-class-at-point-treesit)
              "TestDepthOne::TestDepthTwo"))))
@@ -129,6 +211,11 @@
                                  "          def foo():"
                                  "            pass<point>")
                                "\n")
+    (should (equal
+             (python-pytest--node-id-class-at-point-treesit)
+             "TestDepthOne::TestDepthTwo::TestDepthThree::TestDepthFour::TestDepthFive"))
+    ;; when the buffer is narrowed, we should get the same result.
+    (narrow-to-defun)
     (should (equal
              (python-pytest--node-id-class-at-point-treesit)
              "TestDepthOne::TestDepthTwo::TestDepthThree::TestDepthFour::TestDepthFive"))))
