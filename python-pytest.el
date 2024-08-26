@@ -189,10 +189,10 @@ don't support treesit should set this variable to nil."
     ("F" "file (this)" python-pytest-file)]
    [("m" "files" python-pytest-files)
     ("M" "directories" python-pytest-directories)]
-   [("d" "def at point (dwim)" python-pytest-run-def-or-class-at-point-dwim :if-not python-pytest-use-treesit-p)
-    ("D" "def at point" python-pytest-run-def-or-class-at-point :if-not python-pytest-use-treesit-p)
-    ("d" "def at point" python-pytest-run-def-at-point-treesit :if python-pytest-use-treesit-p)
-    ("c" "class at point" python-pytest-run-class-at-point-treesit :if python-pytest-use-treesit-p)]])
+   [("d" "def at point (dwim)" python-pytest-run-def-or-class-at-point-dwim :if-not python-pytest--use-treesit-p)
+    ("D" "def at point" python-pytest-run-def-or-class-at-point :if-not python-pytest--use-treesit-p)
+    ("d" "def at point" python-pytest-run-def-at-point-treesit :if python-pytest--use-treesit-p)
+    ("c" "class at point" python-pytest-run-class-at-point-treesit :if python-pytest--use-treesit-p)]])
 
 (define-obsolete-function-alias 'python-pytest-popup 'python-pytest-dispatch "2.0.0")
 
@@ -473,7 +473,7 @@ TestClassParent::TestClassChild::test_my_function."
       (setq process (get-buffer-process buffer))
       (set-process-sentinel process #'python-pytest--process-sentinel))))
 
-(defun python-pytest-use-treesit-p ()
+(defun python-pytest--use-treesit-p ()
   "Return t if python-pytest-use-treesit is t. Otherwise, return nil.
 
 This function is passed to the parameter :if in
