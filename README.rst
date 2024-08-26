@@ -399,6 +399,15 @@ __ https://stable.melpa.org/
 development branch
 ------------------
 
+- prefer ``tree-sitter`` for function/class at point commands
+  (`#75 <https://github.com/wbolster/emacs-python-pytest/pull/75>`_)
+
+- add option ``--log-cli-level``
+  (`#74 <https://github.com/wbolster/emacs-python-pytest/pull/74>`_)
+
+- add ``project.el`` support
+  (`#73 <https://github.com/wbolster/emacs-python-pytest/pull/73>`_)
+
 - use ``completing-read-multiple`` for multiple files selection
   (`#72 <https://github.com/wbolster/emacs-python-pytest/issues/72>`_)
 
