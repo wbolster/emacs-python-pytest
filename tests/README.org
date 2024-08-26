@@ -1,0 +1,9 @@
+The following command can be used to run all tests in the directory =tests=. The command should be run in the root directory of the project. The command explicitly loads the file =python-pytest.el= in this repository, this is done to make sure that Emacs uses the symbol definitions from that file instead of other locations that might have the same package (e.g. installed through MELPA.)
+
+#+BEGIN_SRC sh
+emacs \
+  --batch \
+  --eval '(load-file "./python-pytest.el")' \
+  --eval '(dolist (file (directory-files-recursively "tests" "\\`[^.].*\\.el\\'\''")) (load-file file))' \
+  --eval '(ert-run-tests-batch-and-exit)'
+#+END_SRC
