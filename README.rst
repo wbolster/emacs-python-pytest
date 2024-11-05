@@ -122,6 +122,10 @@ if a project has a conventional layout.
 
 __ https://github.com/bbatsov/projectile
 
+to run function/class tests, ``tree-sitter`` is needed, including the python language grammar::
+
+  M-x treesit-install-language-grammar
+
 
 usage
 =====
