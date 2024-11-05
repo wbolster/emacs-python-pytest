@@ -122,8 +122,7 @@ if a project has a conventional layout.
 
 __ https://github.com/bbatsov/projectile
 
-You will need also `tree-sitter` for function/class tests run. You can
-install python language grammar using::
+to run function/class tests, ``tree-sitter`` is needed, including the python language grammar::
 
   M-x treesit-install-language-grammar
 
