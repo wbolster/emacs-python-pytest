@@ -128,6 +128,25 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
            (set-default symbol value)
            value))))
 
+(defcustom python-pytest-project-root-override nil
+  "Override directory where pytest runs.
+It is intended to be set in monorepo which has multiple roots to run pytest,
+and to be set via .dir-locals.el."
+  :group 'python-pytest
+  :type '(choice directory
+                 (const :tag "No override" nil)))
+
+(defcustom python-pytest-project-name-override nil
+  "Override project name.
+It should be set in monorepo which has multiple roots to run pytest.
+Each root must have setting for `python-pytest-project-root-override'
+in .dir-locals.el.
+
+It is also intended to be set via .dir-locals.el."
+  :group 'python-pytest
+  :type '(choice directory
+                 (const :tag "No override" nil)))
+
 (defcustom python-pytest-use-treesit (featurep 'treesit)
   "Whether to use treesit for getting the node ids of things at point.
 
@@ -773,26 +792,29 @@ Example: ‘MyABCThingy.__repr__’ becomes ‘test_my_abc_thingy_repr’."
 
 (defun python-pytest--project-name ()
   "Find the project name."
-  (if (python-pytest--using-projectile)
-      (projectile-project-name)
-    (if (fboundp 'project-name)
-        (project-name (project-current))
-      ;; older emacs...
-      (file-name-nondirectory
+  (cond
+   (python-pytest-project-name-override)
+   ((python-pytest--using-projectile)
+    (projectile-project-name))
+   ((fboundp 'project-name)
+    (project-name (project-current)))
+   ;; older emacs...
+   (t (file-name-nondirectory
        (directory-file-name (car (project-roots (project-current))))))))
 
 (defun python-pytest--project-root ()
-  "Find the project root directory, for project.el can manually set your own
-`project-compilation-dir' variable to override `project-root' being used."
-  (if (python-pytest--using-projectile)
-      (let ((projectile-require-project-root nil))
-        (projectile-compilation-dir))
-    (or (and (bound-and-true-p project-compilation-dir)
-             project-compilation-dir)
-        (if (fboundp 'project-root)
-            (project-root (project-current))
-          ;; pre-emacs "28.1"
-          (car (project-roots (project-current)))))))
+  "Find the project root directory.
+The return value can manually set your own `python-pytest-project-root-override'
+variable."
+  (cond
+   (python-pytest-project-root-override)
+   ((python-pytest--using-projectile)
+    (let ((projectile-require-project-root nil))
+      (projectile-compilation-dir)))
+   ((fboundp 'project-root)
+    (project-root (project-current)))
+   ;; pre-emacs "28.1"
+   (t (car (project-roots (project-current))))))
 
 (defun python-pytest--relative-file-name (file)
   "Make FILE relative to the project root."
