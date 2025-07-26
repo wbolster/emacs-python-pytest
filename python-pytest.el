@@ -52,6 +52,15 @@ When t, this toggles the behaviour of the prefix argument."
   :group 'python-pytest
   :type 'string)
 
+(defcustom python-pytest-shell-executable
+  (if (eq system-type 'windows-nt)
+      (or (executable-find "powershell")
+          (executable-find "cmdproxy"))
+    "sh")
+  "The name of the pytest shell executable."
+  :group 'python-pytest
+  :type 'string)
+
 (defcustom python-pytest-setup-hook nil
   "Hooks to run before a pytest process starts."
   :group 'python-pytest
@@ -486,7 +495,7 @@ TestClassParent::TestClassChild::test_my_function."
       (run-hooks 'python-pytest-setup-hook)
       (make-comint-in-buffer
        "pytest" buffer
-       (if (eq system-type 'windows-nt) "cmdproxy" "sh")
+       python-pytest-shell-executable
        nil "-c" command)
       (run-hooks 'python-pytest-started-hook)
       (setq process (get-buffer-process buffer))
