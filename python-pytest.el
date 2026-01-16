@@ -186,7 +186,8 @@ don't support treesit should set this variable to nil."
     ("-q" "quiet" "--quiet")
     ("-s" "no output capture" "--capture=no")
     (python-pytest:-v)
-    (python-pytest:--l)]]
+    (python-pytest:--l)
+    (python-pytest:--durations)]]
   ["Selection, filtering, ordering"
    [(python-pytest:-k)
     (python-pytest:-m)
@@ -619,6 +620,13 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
   :key "-n"
   :argument "--numprocesses="
   :choices '("auto" "0" "1" "2" "4" "8" "16"))
+
+(transient-define-argument python-pytest:--durations ()
+  :description "show N slowest setup/test durations (N=0 for all)"
+  :class 'transient-option
+  :key "--du"
+  :argument "--durations="
+  :choices '("0" "10" "20" "40"))
 
 (defun python-pytest--using-projectile ()
   "Returns t if projectile being used for project management."
