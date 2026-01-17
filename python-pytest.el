@@ -622,7 +622,7 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
   :choices '("auto" "0" "1" "2" "4" "8" "16"))
 
 (transient-define-argument python-pytest:--durations ()
-  :description "show N slowest setup/test durations (N=0 for all)"
+  :description "show durations"
   :class 'transient-option
   :key "--du"
   :argument "--durations="
