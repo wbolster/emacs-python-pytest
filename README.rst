@@ -403,6 +403,17 @@ __ https://stable.melpa.org/
 development branch
 ------------------
 
+- various modernisations
+
+- add ``--durations`` option
+  (`#87 <https://github.com/wbolster/emacs-python-pytest/pull/87>`_)
+
+- expose shell executable ``python-pytest-shell-executable``
+  (`#84 <https://github.com/wbolster/emacs-python-pytest/pull/84>`_)
+
+- project root and project name overridable for monorepos
+  (`#82 <https://github.com/wbolster/emacs-python-pytest/pull/82>`_)
+
 - prefer ``tree-sitter`` for function/class at point commands
   (`#75 <https://github.com/wbolster/emacs-python-pytest/pull/75>`_)
 
