@@ -2,7 +2,7 @@
 
 ;; Author: wouter bolsterlee <wouter@bolsterl.ee>
 ;; Version: 3.5.0
-;; Package-Requires: ((emacs "24.4") (dash "2.18.0") (transient "0.3.7") (s "1.12.0"))
+;; Package-Requires: ((emacs "28.1") (dash "2.18.0") (transient "0.3.7") (s "1.12.0"))
 ;; Keywords: pytest, test, python, languages, processes, tools
 ;; URL: https://github.com/wbolster/emacs-python-pytest
 ;;
@@ -815,9 +815,8 @@ Example: ‘MyABCThingy.__repr__’ becomes ‘test_my_abc_thingy_repr’."
     (projectile-project-name))
    ((fboundp 'project-name)
     (project-name (project-current)))
-   ;; older emacs...
    (t (file-name-nondirectory
-       (directory-file-name (car (project-roots (project-current))))))))
+       (directory-file-name (project-root (project-current)))))))
 
 (defun python-pytest--project-root ()
   "Find the project root directory.
@@ -830,8 +829,7 @@ variable."
       (projectile-compilation-dir)))
    ((fboundp 'project-root)
     (project-root (project-current)))
-   ;; pre-emacs "28.1"
-   (t (car (project-roots (project-current))))))
+   (t (error "Could not determine project root"))))
 
 (defun python-pytest--relative-file-name (file)
   "Make FILE relative to the project root."
