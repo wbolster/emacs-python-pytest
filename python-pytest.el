@@ -128,11 +128,11 @@ When non-nil only ‘test_foo()’ will match, and nothing else."
          (cond
           ((and (eq value 'projectile)
                 (not (featurep 'projectile)))
-           (user-error "Projectile preferred for python-pytest.el, but not available."))
+           (user-error "Projectile preferred for python-pytest.el, but not available"))
           ((and (eq value 'project)
                 (not (fboundp 'project-root)))
            (user-error (concat "Project.el preferred for python-pytest.el, "
-                               "but need a newer version of Project (28.1+) to use.")))
+                               "but need a newer version of Project (28.1+) to use")))
           (t
            (set-default symbol value)
            value))))
@@ -638,7 +638,7 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
 
 (defun python-pytest--point-is-inside-def-treesit ()
   (unless (treesit-language-available-p 'python)
-    (error "This function requires tree-sitter support for python, but it is not available."))
+    (error "This function requires tree-sitter support for python, but it is not available"))
   (save-restriction
     (widen)
     (catch 'return
@@ -649,7 +649,7 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
 
 (defun python-pytest--point-is-inside-class-treesit ()
   (unless (treesit-language-available-p 'python)
-    (error "This function requires tree-sitter support for python, but it is not available."))
+    (error "This function requires tree-sitter support for python, but it is not available"))
   (save-restriction
     (widen)
     (catch 'return
@@ -669,7 +669,7 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
   inside another class, its node id would look like:
   TestGroupParent::TestGroupChild::test_my_function."
   (unless (python-pytest--point-is-inside-def-treesit)
-    (error "The point is not inside a def."))
+    (error "Point is not inside a def"))
   (save-restriction
     (widen)
     (let ((function
@@ -734,7 +734,7 @@ When present ON-REPLACEMENT is substituted, else OFF-REPLACEMENT is appended."
   while the node id of the class which contains the other class would
   be TestGroupParent."
   (unless (python-pytest--point-is-inside-class-treesit)
-    (error "The point is not inside a class."))
+    (error "Point is not inside a class"))
   (save-restriction
     (widen)
     (let ((class
