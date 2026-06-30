@@ -400,7 +400,7 @@ while `melpa stable`__ only contains tagged (released) versions.
 __ https://melpa.org/
 __ https://stable.melpa.org/
 
-development branch
+3.6.0 (2026-06-30)
 ------------------
 
 - various modernisations
